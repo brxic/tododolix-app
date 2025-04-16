@@ -9,9 +9,3 @@ export const routes: Routes = [
   { path: 'archive', component: ArchiveComponent },
   { path: 'howtouse', component: HowtouseComponent }
 ];
-
-@NgModule({
-  imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
-})
-export class AppRoutingModule {}
