@@ -1,1 +1,9 @@
-<p>archive works!</p>
+<div class="p-4">
+  <h2 class="text-xl font-bold mb-4">Archive</h2>
+
+  <div *ngFor="let todo of archivedTodos" class="bg-gray-200 p-4 rounded mb-3">
+    <p class="font-semibold">{{ todo.description }}</p>
+    <p class="text-sm text-gray-600">{{ todo.date }}</p>
+    <p class="text-sm text-gray-600">Status: {{ todo.status }}</p>
+  </div>
+</div>

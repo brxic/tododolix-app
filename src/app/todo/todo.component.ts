@@ -20,7 +20,6 @@ export interface Todo {
   imports: [
     NgClass,
     NgForOf,
-    DatePipe,
     FormsModule,
     NgIf
   ]
@@ -37,6 +36,7 @@ export class TodoComponent {
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {
       this.loadTodos();
+      this.saveTodos();
     }
   }
 
@@ -72,6 +72,11 @@ export class TodoComponent {
       'done': 'open'
     };
     todo.status = nextStatus[todo.status];
+
+    if (todo.status === 'done') {
+      todo.archived = true;
+    }
+
     this.saveTodos();
   }
 
@@ -79,12 +84,14 @@ export class TodoComponent {
     this.formTodo = this.createEmptyTodo();
     this.isEditMode = false;
     this.showForm = true;
+    this.saveTodos();
   }
 
   editTodo(todo: Todo) {
     this.formTodo = { ...todo };
     this.isEditMode = true;
     this.showForm = true;
+    this.saveTodos();
   }
 
   saveTodo() {
@@ -102,28 +109,29 @@ export class TodoComponent {
     this.showForm = false;
     this.formTodo = this.createEmptyTodo();
     this.isEditMode = false;
+    this.saveTodos();
   }
 
   confirmDelete(todo: Todo) {
     this.todoToDelete = todo;
+    this.saveTodos();
   }
 
   cancelDelete() {
     this.todoToDelete = null;
+    this.saveTodos();
   }
 
-  deleteTodo() {
-    if (this.todoToDelete) {
-      this.todos = this.todos.filter(t => t.id !== this.todoToDelete!.id);
-      this.todoToDelete = null;
-      this.saveTodos();
-    }
+  archiveTodo(todo: Todo): void {
+    todo.archived = true;
+    this.saveTodos();
   }
 
   loadTodos() {
     if (isPlatformBrowser(this.platformId)) {
       const raw = localStorage.getItem('todos');
-      this.todos = raw ? JSON.parse(raw) : [];
+      this.todos = raw ? JSON.parse(raw).filter((t: Todo) => !t.archived) : [];
+      this.saveTodos();
     }
   }
 

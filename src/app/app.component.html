@@ -1,19 +1,31 @@
-<header class="flex justify-between items-center px-4 py-2 bg-white shadow">
-  <div class="text-2xl font-bold text-red-700 flex items-center gap-2 font-aoboshi">
-    <img src="Logo.png" alt="logo" class="w-6 h-8"> Tododolix
+<header class="flex items-center justify-between px-4 py-2 bg-white shadow relative z-50">
+  <!-- Logo -->
+  <div class="flex items-center gap-2">
+    <img src="Logo.png" alt="Tododolix" class="w-6 h-8" />
+    <span class="text-lg font-bold text-red-800">Tododolix</span>
   </div>
-  <nav class="flex gap-4 items-center text-sm">
-    <a routerLink="/tasks" routerLinkActive="font-bold underline">Tasks</a>
-    <a routerLink="/archive" routerLinkActive="font-bold underline">Archive</a>
-    <a routerLink="/howtouse" routerLinkActive="font-bold underline">How to use</a>
-  </nav>
+
+  <!-- Task Counter -->
+  <div class="text-center font-bold">Tasks: {{ activeTaskCount }}</div>
+
+  <button (click)="toggleMenu()" class="w-8 h-8">
+    <img src="burger.png" alt="menu" class="w-8 h-8" />
+  </button>
 </header>
-<main class="p-4">
-  <router-outlet></router-outlet>
-</main>
-<div>
-  <div>
-  </div>
-  <app-todo></app-todo>
+
+<div *ngIf="menuOpen"
+     (click)="toggleMenu()"
+     class="fixed inset-0  z-40 transition-opacity duration-300">
 </div>
 
+<nav [class.translate-x-0]="menuOpen"
+     [class.translate-x-full]="!menuOpen"
+     class="fixed top-0 right-0 w-64 h-full bg-white z-50 transform transition-transform duration-300
+            flex flex-col justify-center items-center gap-10 text-xl shadow-lg">
+  <a routerLink="/" routerLinkActive="font-bold underline" (click)="toggleMenu()">Tasks</a>
+  <a routerLink="/archive" routerLinkActive="font-bold underline" (click)="toggleMenu()">Archive</a>
+  <a routerLink="/howtouse" routerLinkActive="font-bold underline" (click)="toggleMenu()">How to Use</a>
+</nav>
+
+<router-outlet></router-outlet>
+<app-todo></app-todo>

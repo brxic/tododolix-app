@@ -2,13 +2,16 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { TodoComponent } from './todo/todo.component';
 import { ArchiveComponent } from './archive/archive.component';
+import { HowtouseComponent } from './howtouse/howtouse.component';
+
 const routes: Routes = [
-  { path: 'tasks', component: TodoComponent },
+  { path: 'todo', component: TodoComponent },
   { path: 'archive', component: ArchiveComponent },
-  { path: '', redirectTo: 'tasks', pathMatch: 'full' },
+  { path: 'howtouse', component: HowtouseComponent }
 ];
+
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}

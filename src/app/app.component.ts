@@ -1,21 +1,26 @@
-import {Component, OnInit} from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-import {TodoComponent} from './todo/todo.component';
+import { Component } from '@angular/core';
+import {Todo, TodoComponent} from './todo/todo.component';
+import {RouterOutlet} from '@angular/router';
+import {NgIf} from '@angular/common'; // oder aus shared file
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, TodoComponent],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
-})
-export class AppComponent implements OnInit{
-
-  todos = [
-    {todo: "Get groceries", done: false},
-    {todo: "Go for a run", done: false},
-    {todo: "Pay the bills", done: false}
+  imports: [
+    RouterOutlet,
+    TodoComponent,
+    NgIf
   ]
+})
+export class AppComponent {
+  menuOpen = false;
+  activeTaskCount = 0;
 
-  ngOnInit(): void {
+  toggleMenu() {
+    this.menuOpen = !this.menuOpen;
+  }
+
+  updateCounter(tasks: Todo[]) {
+    this.activeTaskCount = tasks.filter(t => !t.archived).length;
   }
 }
