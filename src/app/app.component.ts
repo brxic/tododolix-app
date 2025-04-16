@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import {Todo, TodoComponent} from './todo/todo.component';
-import {RouterOutlet} from '@angular/router';
+import {RouterLink, RouterLinkActive, RouterOutlet} from '@angular/router';
 import {NgIf} from '@angular/common'; // oder aus shared file
 
 @Component({
@@ -9,7 +9,9 @@ import {NgIf} from '@angular/common'; // oder aus shared file
   imports: [
     RouterOutlet,
     TodoComponent,
-    NgIf
+    NgIf,
+    RouterLink,
+    RouterLinkActive
   ]
 })
 export class AppComponent {

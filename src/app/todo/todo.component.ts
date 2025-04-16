@@ -84,14 +84,12 @@ export class TodoComponent {
     this.formTodo = this.createEmptyTodo();
     this.isEditMode = false;
     this.showForm = true;
-    this.saveTodos();
   }
 
   editTodo(todo: Todo) {
     this.formTodo = { ...todo };
     this.isEditMode = true;
     this.showForm = true;
-    this.saveTodos();
   }
 
   saveTodo() {
@@ -109,29 +107,30 @@ export class TodoComponent {
     this.showForm = false;
     this.formTodo = this.createEmptyTodo();
     this.isEditMode = false;
-    this.saveTodos();
   }
 
   confirmDelete(todo: Todo) {
     this.todoToDelete = todo;
-    this.saveTodos();
   }
 
   cancelDelete() {
     this.todoToDelete = null;
-    this.saveTodos();
   }
 
   archiveTodo(todo: Todo): void {
     todo.archived = true;
     this.saveTodos();
+    this.todoToDelete = null;
+  }
+
+  getActiveTodos(): Todo[] {
+    return this.todos.filter(t => !t.archived);
   }
 
   loadTodos() {
     if (isPlatformBrowser(this.platformId)) {
       const raw = localStorage.getItem('todos');
-      this.todos = raw ? JSON.parse(raw).filter((t: Todo) => !t.archived) : [];
-      this.saveTodos();
+      this.todos = raw ? JSON.parse(raw) : [];
     }
   }
 
