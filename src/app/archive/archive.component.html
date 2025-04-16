@@ -1,9 +1,27 @@
 <div class="p-4">
-  <h2 class="text-xl font-bold mb-4">Archive</h2>
+  <div class="flex items-center justify-between mb-4">
+    <h2 class="text-2xl font-bold">Archive <span class="inline-block ml-2">
+      <img src="archive.png" alt="clear" class="w-8 h-8">
+    </span></h2>
+    <button (click)="clearArchive()" class="text-red-500 flex items-center gap-2 hover:underline">
+      Clear archive <img src="cleararchive.png" alt="clear" class="w-5 h-5">
+    </button>
+  </div>
 
-  <div *ngFor="let todo of archivedTodos" class="bg-gray-200 p-4 rounded mb-3">
-    <p class="font-semibold">{{ todo.description }}</p>
-    <p class="text-sm text-gray-600">{{ todo.date }}</p>
-    <p class="text-sm text-gray-600">Status: {{ todo.status }}</p>
+  <div *ngFor="let todo of archivedTodos" class="bg-yellow-100 p-4 rounded shadow mb-3 flex justify-between items-center">
+    <div>
+      <div class="text-sm font-bold">{{ getWeekday(todo.date) }}</div>
+      <div class="text-base">{{ todo.description }}</div>
+    </div>
+
+    <div class="flex items-center gap-4">
+      <span [ngClass]="{
+        'bg-green-500': todo.status === 'done',
+        'bg-red-500': todo.status === 'open' || todo.status === 'in-progress'
+      }" class="text-white text-xs px-3 py-1 rounded font-bold">
+        {{ todo.status === 'done' ? 'DONE' : 'DELETED' }}
+      </span>
+      <img [src]="getPriorityIcon(todo.priority)" class="w-4 h-4" alt="priority" />
+    </div>
   </div>
 </div>
