@@ -1,7 +1,7 @@
 <div class="p-4">
   <div class="flex items-center justify-between mb-4">
     <h2 class="text-2xl font-bold">Archive <span class="inline-block ml-2">
-      <img src="archive.png" alt="clear" class="w-8 h-8">
+      <img src="archive.png" alt="archive" class="w-8 h-8 hidden sm:inline">
     </span></h2>
     <button (click)="clearArchive()" class="text-red-500 flex items-center gap-2 hover:underline">
       Clear archive <img src="cleararchive.png" alt="clear" class="w-5 h-5">
@@ -21,7 +21,7 @@
       }" class="text-white text-xs px-3 py-1 rounded font-bold">
         {{ todo.status === 'done' ? 'DONE' : 'DELETED' }}
       </span>
-      <img [src]="getPriorityIcon(todo.priority)" class="w-4 h-4" alt="priority" />
+      <img [src]="getPriorityIcon(todo.priority)" class="w-8^7 h-7" alt="priority" />
     </div>
   </div>
 </div>

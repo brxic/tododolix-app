@@ -1,43 +1,41 @@
-import { Component, Inject, PLATFORM_ID } from '@angular/core';
-import {DatePipe, isPlatformBrowser, NgClass, NgForOf, NgIf} from '@angular/common';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import { Todo, Priority, Status } from './todo.model'; // falls du das ausgelagert hast
+import { TodoService } from './todo.service';
 import {FormsModule} from '@angular/forms';
-
-export type Priority = 'low' | 'medium' | 'high';
-export type Status = 'open' | 'in-progress' | 'done';
-
-export interface Todo {
-  id: string;
-  description: string;
-  date: string;
-  priority: Priority;
-  status: Status;
-  archived: boolean;
-}
+import {NgClass, NgForOf, NgIf} from '@angular/common';
+import { Router, NavigationEnd } from '@angular/router';
+import { filter } from 'rxjs/operators';
+import * as crypto from 'node:crypto';
+import {Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-todo',
   templateUrl: './todo.component.html',
   imports: [
-    NgClass,
-    NgForOf,
     FormsModule,
-    NgIf
+    NgIf,
+    NgClass,
+    NgForOf
   ]
 })
-export class TodoComponent {
-  todos: Todo[] = [];
+export class TodoComponent implements OnInit, OnDestroy{
   showForm = false;
   isEditMode = false;
   formTodo: Todo = this.createEmptyTodo();
   todoToDelete: Todo | null = null;
+  private createSub!: Subscription;
 
-  constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
+  constructor(public todoService: TodoService, private router: Router) {}
 
   ngOnInit(): void {
-    if (isPlatformBrowser(this.platformId)) {
-      this.loadTodos();
-      this.saveTodos();
-    }
+    this.createSub = this.todoService.onCreateRequest().subscribe(() => {
+      console.log('onCreateRequest');
+      this.openCreateForm();
+    });
+  }
+
+  get isStartPage(): boolean {
+    return this.router.url ==='/';
   }
 
   createEmptyTodo(): Todo {
@@ -51,38 +49,10 @@ export class TodoComponent {
     };
   }
 
-  getPriorityIcon(priority: Priority): string {
-    switch (priority) {
-      case 'low': return 'low.png';
-      case 'medium': return 'medium.png';
-      case 'high': return 'high.png';
-      default: return '';
-    }
-  }
-
-  getWeekday(dateStr: string): string {
-    const date = new Date(dateStr);
-    return date.toLocaleDateString('en-US', { weekday: 'short' });
-  }
-
-  cycleStatus(todo: Todo) {
-    const nextStatus: Record<Status, Status> = {
-      'open': 'in-progress',
-      'in-progress': 'done',
-      'done': 'open'
-    };
-    todo.status = nextStatus[todo.status];
-
-    if (todo.status === 'done') {
-      todo.archived = true;
-    }
-
-    this.saveTodos();
-  }
-
   openCreateForm() {
     this.formTodo = this.createEmptyTodo();
     this.isEditMode = false;
+    console.log('openCreateForm');
     this.showForm = true;
   }
 
@@ -94,18 +64,17 @@ export class TodoComponent {
 
   saveTodo() {
     if (this.isEditMode) {
-      this.todos = this.todos.map(t => t.id === this.formTodo.id ? { ...this.formTodo } : t);
+      this.todoService.update(this.formTodo);
     } else {
-      this.formTodo.id = crypto.randomUUID();
-      this.todos.push({ ...this.formTodo });
+      this.formTodo.id = Date.now().toString() + Math.random().toString(36).substring(2, 8);
+      this.todoService.add(this.formTodo);
     }
     this.cancelForm();
-    this.saveTodos();
   }
 
   cancelForm() {
-    this.showForm = false;
     this.formTodo = this.createEmptyTodo();
+    this.showForm = false;
     this.isEditMode = false;
   }
 
@@ -118,25 +87,27 @@ export class TodoComponent {
   }
 
   archiveTodo(todo: Todo): void {
-    todo.archived = true;
-    this.saveTodos();
+    this.todoService.archive(todo);
     this.todoToDelete = null;
   }
 
+  cycleStatus(todo: Todo) {
+    this.todoService.cycleStatus(todo);
+  }
+
   getActiveTodos(): Todo[] {
-    return this.todos.filter(t => !t.archived);
+    return this.todoService.getActive();
   }
 
-  loadTodos() {
-    if (isPlatformBrowser(this.platformId)) {
-      const raw = localStorage.getItem('todos');
-      this.todos = raw ? JSON.parse(raw) : [];
-    }
+  getWeekday(dateStr: string): string {
+    return this.todoService.getWeekday(dateStr);
   }
 
-  saveTodos() {
-    if (isPlatformBrowser(this.platformId)) {
-      localStorage.setItem('todos', JSON.stringify(this.todos));
-    }
+  getPriorityIcon(priority: Priority): string {
+    return this.todoService.getPriorityIcon(priority);
+  }
+
+  ngOnDestroy(): void {
+    this.createSub.unsubscribe();
   }
 }

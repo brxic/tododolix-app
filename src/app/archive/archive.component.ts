@@ -1,49 +1,37 @@
-import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
-import {isPlatformBrowser, NgClass, NgForOf} from '@angular/common';
-import { Todo } from '../todo/todo.component';
+import {Component, OnInit} from '@angular/core';
+import {TodoService} from '../todo/todo.service';
+import {Todo} from '../todo/todo.model';
+import {NgClass, NgForOf} from '@angular/common';
 
 @Component({
   selector: 'app-archive',
-  templateUrl: './archive.component.html',
   imports: [
     NgClass,
     NgForOf
-  ]
+  ],
+  templateUrl: './archive.component.html'
 })
 export class ArchiveComponent implements OnInit {
   archivedTodos: Todo[] = [];
 
-  constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
-
-  ngOnInit(): void {
-    if (isPlatformBrowser(this.platformId)) {
-      const raw = localStorage.getItem('todos');
-      const allTodos: Todo[] = raw ? JSON.parse(raw) : [];
-      this.archivedTodos = allTodos.filter(todo => todo.archived);
-    }
+  constructor(public todoService: TodoService) {
   }
 
-  clearArchive() {
-    if (isPlatformBrowser(this.platformId)) {
-      const raw = localStorage.getItem('todos');
-      let all: Todo[] = raw ? JSON.parse(raw) : [];
-      all = all.filter(todo => !todo.archived);
-      localStorage.setItem('todos', JSON.stringify(all));
-      this.archivedTodos = [];
-    }
+  ngOnInit(): void {
+    this.archivedTodos = this.todoService.getArchived();
+
+  }
+
+  clearArchive(): void {
+    this.todoService.clearArchive();
+    this.archivedTodos = this.todoService.getArchived();
   }
 
   getWeekday(dateStr: string): string {
-    const date = new Date(dateStr);
-    return date.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase();
+    return this.todoService.getWeekday(dateStr);
   }
 
   getPriorityIcon(priority: string): string {
-    switch (priority) {
-      case 'low': return 'low.png';
-      case 'medium': return 'medium.png';
-      case 'high': return 'high.png';
-      default: return '';
-    }
+    return this.todoService.getPriorityIcon(priority);
   }
 }

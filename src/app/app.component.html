@@ -2,20 +2,25 @@
   <!-- Logo -->
   <div class="flex items-center gap-2">
     <img src="Logo.png" alt="Tododolix" class="w-6 h-8" />
-    <span class="text-lg font-bold text-red-800">Tododolix</span>
+    <span class="text-lg font-bold text-red-800 hidden sm:inline">Tododolix</span>
   </div>
 
   <!-- Task Counter -->
-  <div class="text-center font-bold">Tasks: {{ activeTaskCount }}</div>
+  <div class="text-center font-bold">ToDo: {{ taskCount }}</div>
 
+<div class="flex items-center gap-10">
+  <button (click)="triggerQuickCreate()" title="Quick Create">
+    <img src="create.png" alt="Quick-Create" class="w-7 h-7 hover:bg-gray-100 rounded" />
+  </button>
   <button (click)="toggleMenu()" class="w-8 h-8">
     <img src="burger.png" alt="menu" class="w-8 h-8" />
   </button>
+</div>
 </header>
 
 <div *ngIf="menuOpen"
      (click)="toggleMenu()"
-     class="fixed inset-0  z-40 transition-opacity duration-300">
+     class="fixed inset-0  z-40 transition-opacity duration-300 backdrop-blur-sm bg-white/30">
 </div>
 
 <nav [class.translate-x-0]="menuOpen"
@@ -28,3 +33,4 @@
 </nav>
 
 <router-outlet></router-outlet>
+<app-todo *ngIf="isNotStartPage"></app-todo>

@@ -1,74 +1,117 @@
-<div class="p-4 max-w-screen-xl text-left">
+<!-- CREATE / EDIT MODAL -->
+<div *ngIf="showForm" class="fixed inset-0 flex items-center justify-center z-50 backdrop-blur-sm bg-black/30">
+  <div class="bg-white p-6 rounded-lg w-80 shadow-xl">
+    <h3 class="text-lg font-bold mb-4">{{ isEditMode ? 'Edit Task' : 'Create Task' }}</h3>
+    <form #todoForm="ngForm" (ngSubmit)="saveTodo()" class="space-y-3">
+      <input
+        type="text"
+        name="description"
+        placeholder="Description"
+        required
+        [(ngModel)]="formTodo.description"
+        class="w-full border border-gray-300 rounded px-3 py-2"
+      />
+      <input
+        type="date"
+        name="date"
+        required
+        [(ngModel)]="formTodo.date"
+        class="w-full border border-gray-300 rounded px-3 py-2"
+      />
+
+      <!-- PRIORITY ICON SELECTION -->
+      <div class="flex justify-between items-center">
+        <label class="text-sm font-medium">Priority:</label>
+        <div class="flex gap-3">
+          <img
+            src="low.png"
+            alt="Low"
+            class="w-7 h-7 cursor-pointer border-2 rounded-full p-1"
+            [ngClass]="formTodo.priority === 'low' ? 'border-blue-500 bg-blue-100' : 'border-transparent'"
+            (click)="formTodo.priority = 'low'"
+          />
+          <img
+            src="medium.png"
+            alt="Medium"
+            class="w-7 h-7 cursor-pointer border-2 rounded-full p-1"
+            [ngClass]="formTodo.priority === 'medium' ? 'border-yellow-500 bg-yellow-100' : 'border-transparent'"
+            (click)="formTodo.priority = 'medium'"
+          />
+          <img
+            src="high.png"
+            alt="High"
+            class="w-7 h-7 cursor-pointer border-2 rounded-full p-1"
+            [ngClass]="formTodo.priority === 'high' ? 'border-red-500 bg-red-100' : 'border-transparent'"
+            (click)="formTodo.priority = 'high'"
+          />
+        </div>
+      </div>
+
+      <div class="flex justify-end gap-2 pt-2">
+        <button type="button" (click)="cancelForm()" class="px-3 py-1 text-gray-600 hover:underline">Cancel</button>
+        <button type="submit" [disabled]="!todoForm.form.valid" class="bg-green-500 hover:bg-green-600 text-white px-4 py-1 rounded">
+          {{ isEditMode ? 'Save' : 'Create' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- TASK LIST + HEADER -->
+<div *ngIf="!showForm && isStartPage" class="p-4 max-w-screen-xl text-left">
   <div class="flex items-center gap-8 mb-4">
     <h1 class="text-2xl font-bold text-gray-800">TODOs</h1>
     <button (click)="openCreateForm()" class="flex items-center text-black px-4 py-2 gap-2">
-      <img src="create.png" alt="create" class="w-4 h-4 hover:bg-gray-100 rounded">Create
+      <img src="create.png" alt="create" class="w-4 h-4 hover:bg-gray-100 rounded" />
+      Create
     </button>
   </div>
 
-  <!-- Task List -->
-  <div class="p-4 grid grid-cols-2 md:grid-cols3 lg:grid-cols-4 gap-4">
-  <div *ngFor="let todo of getActiveTodos()" class="bg-yellow-100 rounded-lg p-4 shadow flex flex-col justify-between w-full aspect-square overflow-hidden">
-    <div class="flex justify-between items-start">
-      <span class="text-sm text-black-500 font-bold uppercase">{{ getWeekday(todo.date) }}</span>
-      <div class="flex gap-1">
-        <button (click)="editTodo(todo)" class="p-1 hover:bg-blue-100 rounded">
-          <img src="edit.png" alt="edit" class="w-4 h-4">
+  <!-- GRID OF TODOS -->
+  <div class="p-4 grid grid-cols-1 min-[468px]:grid-cols-2 min-[768px]:grid-cols-3 lg:grid-cols-4 gap-4">
+    <div
+      *ngFor="let todo of getActiveTodos()"
+      class="bg-yellow-100 rounded-lg p-4 shadow flex flex-col justify-between w-full aspect-square overflow-hidden"
+    >
+      <!-- WEEKDAY + ICONS -->
+      <div class="flex justify-between items-start">
+        <span class="text-sm text-black-500 font-bold uppercase">{{ getWeekday(todo.date) }}</span>
+        <div class="flex gap-1">
+          <button (click)="editTodo(todo)" class="p-1 hover:bg-blue-100 rounded">
+            <img src="edit.png" alt="edit" class="w-4 h-4" />
+          </button>
+          <button (click)="confirmDelete(todo)" class="p-1 hover:bg-red-100 rounded">
+            <img src="delete.png" alt="delete" class="w-4 h-4" />
+          </button>
+        </div>
+      </div>
+
+      <!-- DESCRIPTION -->
+      <div class="mt-2 flex justify-between items-center">
+        <p class="text-base break-words line-clamp-3">{{ todo.description }}</p>
+      </div>
+
+      <!-- STATUS + PRIORITY -->
+      <div class="flex justify-between items-center mt-2 text-sm text-gray-600">
+        <button
+          (click)="cycleStatus(todo)"
+          class="text-xs font-semibold px-2 py-1 rounded text-white"
+          [ngClass]="{
+            'bg-gray-500': todo.status === 'open',
+            'bg-blue-500': todo.status === 'in-progress',
+            'bg-green-600': todo.status === 'done'
+          }"
+        >
+          {{ todo.status.toUpperCase() }}
         </button>
-        <button (click)="confirmDelete(todo)" class="p-1 hover:bg-red-100 rounded">
-          <img src="delete.png" alt="delete" class="w-4 h-4">
-        </button>
+        <img [src]="getPriorityIcon(todo.priority)" alt="priority-icon" class="w-7 h-7" />
       </div>
     </div>
-
-    <!-- Description and status -->
-    <div class="mt-2 flex justify-between items-center">
-      <p class="text-base break-words line-clamp-3">{{ todo.description }}</p>
-    </div>
-
-    <!-- Date + priority icon -->
-    <div class="flex justify-between items-center mt-2 text-sm text-gray-600">
-      <button (click)="cycleStatus(todo)"
-              class="text-xs font-semibold px-2 py-1 rounded text-white"
-              [ngClass]="{
-                'bg-gray-500': todo.status === 'open',
-                'bg-blue-500': todo.status === 'in-progress',
-                'bg-green-600': todo.status === 'done'
-              }">
-        {{ todo.status.toUpperCase() }}
-      </button>
-      <img [src]="getPriorityIcon(todo.priority)" alt="priority-icon" class="w-5 h-5" />
-    </div>
   </div>
 </div>
 
-<div *ngIf="showForm" class="fixed inset-0 flex items-center justify-center z-50">
-  <div class="bg-white p-6 rounded-lg w-80 shadow-xl">
-    <h3 class="text-lg font-bold mb-4">{{ isEditMode ? 'Edit Task' : 'Create Task' }}</h3>
-
-    <input type="text" placeholder="Description" [(ngModel)]="formTodo.description"
-           class="w-full border border-gray-300 rounded px-3 py-2 mb-2">
-
-    <input type="date" [(ngModel)]="formTodo.date"
-           class="w-full border border-gray-300 rounded px-3 py-2 mb-2">
-
-    <select [(ngModel)]="formTodo.priority"
-            class="w-full border border-gray-300 rounded px-3 py-2 mb-2">
-      <option value="low">Low</option>
-      <option value="medium">Medium</option>
-      <option value="high">High</option>
-    </select>
-
-    <div class="flex justify-end gap-2">
-      <button (click)="cancelForm()" class="px-3 py-1 text-gray-600 hover:underline">Cancel</button>
-      <button (click)="saveTodo()" class="bg-green-500 hover:bg-green-600 text-white px-4 py-1 rounded">
-        {{ isEditMode ? 'Save' : 'Create' }}
-      </button>
-    </div>
-  </div>
-</div>
-
-<div *ngIf="todoToDelete" class="fixed inset-0 flex items-center justify-center z-50">
+<!-- DELETE CONFIRMATION -->
+<div *ngIf="todoToDelete && isStartPage" class="fixed inset-0 flex items-center justify-center z-50 backdrop-blur-sm bg-white/30">
   <div class="bg-white p-5 rounded-lg shadow-lg w-64">
     <p class="mb-4 text-center">Are you sure you want to delete this task?</p>
     <div class="flex justify-between">
