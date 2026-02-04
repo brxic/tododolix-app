@@ -8,20 +8,24 @@
     </button>
   </div>
 
-  <div *ngFor="let todo of archivedTodos" class="bg-yellow-100 p-4 rounded shadow mb-3 flex justify-between items-center">
+  <div *ngFor="let todo of archivedTodos" class="p-4 rounded shadow mb-3 flex justify-between items-center" [ngClass]="todoService.getColorClass(todo.color)">
     <div>
       <div class="text-sm font-bold">{{ getWeekday(todo.date) }}</div>
       <div class="text-base">{{ todo.description }}</div>
+      <div class="text-sm font-semibold text-gray-700">{{ getTimeLabel(todo) }}</div>
     </div>
 
     <div class="flex items-center gap-4">
+      <button (click)="restoreTodo(todo)" class="text-xs px-3 py-1 rounded bg-gray-200 hover:bg-gray-300">
+        Restore
+      </button>
       <span [ngClass]="{
         'bg-green-500': todo.status === 'done',
         'bg-red-500': todo.status === 'open' || todo.status === 'in-progress'
       }" class="text-white text-xs px-3 py-1 rounded font-bold">
         {{ todo.status === 'done' ? 'DONE' : 'DELETED' }}
       </span>
-      <img [src]="getPriorityIcon(todo.priority)" class="w-8^7 h-7" alt="priority" />
+      <img [src]="getPriorityIcon(todo.priority)" class="w-8 h-7" alt="priority" />
     </div>
   </div>
 </div>

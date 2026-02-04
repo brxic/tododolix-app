@@ -1,17 +1,15 @@
 <header class="flex items-center justify-between px-4 py-2 bg-white shadow relative z-50">
-  <!-- Logo -->
-  <div class="flex items-center gap-2">
-    <img src="Logo.png" alt="Tododolix" class="w-6 h-8" />
-    <span class="text-lg font-bold text-red-800 hidden sm:inline">Tododolix</span>
+  <!-- Quick Create in corner -->
+  <div>
+    <button (click)="triggerQuickCreate()" title="Quick Create" class="flex items-center gap-2">
+      <img src="create.png" alt="Quick-Create" class="w-7 h-7 hover:bg-gray-100 rounded" />
+    </button>
   </div>
 
   <!-- Task Counter -->
   <div class="text-center font-bold">ToDo: {{ taskCount }}</div>
 
 <div class="flex items-center gap-10">
-  <button (click)="triggerQuickCreate()" title="Quick Create">
-    <img src="create.png" alt="Quick-Create" class="w-7 h-7 hover:bg-gray-100 rounded" />
-  </button>
   <button (click)="toggleMenu()" class="w-8 h-8">
     <img src="burger.png" alt="menu" class="w-8 h-8" />
   </button>

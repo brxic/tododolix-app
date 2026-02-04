@@ -27,11 +27,26 @@ export class ArchiveComponent implements OnInit {
     this.archivedTodos = this.todoService.getArchived();
   }
 
+  restoreTodo(todo: Todo): void {
+    this.todoService.restore(todo);
+    this.archivedTodos = this.todoService.getArchived();
+  }
+
   getWeekday(dateStr: string): string {
     return this.todoService.getWeekday(dateStr);
   }
 
   getPriorityIcon(priority: string): string {
     return this.todoService.getPriorityIcon(priority);
+  }
+
+  getTimeLabel(todo: Todo): string {
+    if (!todo.time) {
+      return '';
+    }
+    if (todo.endTime && todo.endTime !== todo.time) {
+      return `${todo.time} - ${todo.endTime}`;
+    }
+    return todo.time;
   }
 }

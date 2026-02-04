@@ -1,11 +1,9 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import { Todo, Priority, Status } from './todo.model'; // falls du das ausgelagert hast
+import { Todo, Priority } from './todo.model'; // falls du das ausgelagert hast
 import { TodoService } from './todo.service';
 import {FormsModule} from '@angular/forms';
 import {NgClass, NgForOf, NgIf} from '@angular/common';
-import { Router, NavigationEnd } from '@angular/router';
-import { filter } from 'rxjs/operators';
-import * as crypto from 'node:crypto';
+import { Router } from '@angular/router';
 import {Subscription} from 'rxjs';
 
 @Component({
@@ -23,6 +21,7 @@ export class TodoComponent implements OnInit, OnDestroy{
   isEditMode = false;
   formTodo: Todo = this.createEmptyTodo();
   todoToDelete: Todo | null = null;
+  draggedTodoId: string | null = null;
   private createSub!: Subscription;
 
   constructor(public todoService: TodoService, private router: Router) {}
@@ -43,9 +42,13 @@ export class TodoComponent implements OnInit, OnDestroy{
       id: '',
       description: '',
       date: '',
+      time: '',
+      endTime: '',
       priority: 'low',
       status: 'open',
       archived: false,
+      color: 'yellow',
+      order: 0,
     };
   }
 
@@ -63,10 +66,15 @@ export class TodoComponent implements OnInit, OnDestroy{
   }
 
   saveTodo() {
+    this.todoService.ensureNotificationPermission();
+    if (this.formTodo.time && !this.formTodo.endTime) {
+      this.formTodo.endTime = this.formTodo.time;
+    }
     if (this.isEditMode) {
       this.todoService.update(this.formTodo);
     } else {
       this.formTodo.id = Date.now().toString() + Math.random().toString(36).substring(2, 8);
+      this.formTodo.order = this.todoService.getActiveCount();
       this.todoService.add(this.formTodo);
     }
     this.cancelForm();
@@ -105,6 +113,40 @@ export class TodoComponent implements OnInit, OnDestroy{
 
   getPriorityIcon(priority: Priority): string {
     return this.todoService.getPriorityIcon(priority);
+  }
+
+  getTimeLabel(todo: Todo): string {
+    if (!todo.time) {
+      return '';
+    }
+    if (todo.endTime && todo.endTime !== todo.time) {
+      return `${todo.time} - ${todo.endTime}`;
+    }
+    return todo.time;
+  }
+
+  onDragStart(todo: Todo, event: DragEvent): void {
+    this.draggedTodoId = todo.id;
+    event.dataTransfer?.setData('text/plain', todo.id);
+    event.dataTransfer?.setDragImage(event.currentTarget as Element, 20, 20);
+  }
+
+  onDragOver(event: DragEvent): void {
+    event.preventDefault();
+  }
+
+  onDrop(target: Todo, event: DragEvent): void {
+    event.preventDefault();
+    const draggedId = this.draggedTodoId || event.dataTransfer?.getData('text/plain');
+    if (!draggedId || draggedId === target.id) {
+      return;
+    }
+    this.todoService.reorderActive(draggedId, target.id);
+    this.draggedTodoId = null;
+  }
+
+  onDragEnd(): void {
+    this.draggedTodoId = null;
   }
 
   ngOnDestroy(): void {

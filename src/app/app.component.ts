@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { TodoService } from './todo/todo.service';
 import {Router, RouterLink, RouterLinkActive, RouterOutlet} from '@angular/router';
 import {NgIf} from '@angular/common';
-import {Subscription} from 'rxjs';
 import {TodoComponent} from './todo/todo.component';
 
 @Component({
@@ -17,11 +16,6 @@ import {TodoComponent} from './todo/todo.component';
   ]
 })
 export class AppComponent {
-  private createSub!: Subscription;
-
-  title(title: any) {
-      throw new Error('Method not implemented.');
-  }
   menuOpen = false;
 
   toggleMenu() {

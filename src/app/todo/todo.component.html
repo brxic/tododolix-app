@@ -18,6 +18,48 @@
         [(ngModel)]="formTodo.date"
         class="w-full border border-gray-300 rounded px-3 py-2"
       />
+      <input
+        type="time"
+        name="time"
+        required
+        [(ngModel)]="formTodo.time"
+        class="w-full border border-gray-300 rounded px-3 py-2"
+      />
+      <input
+        type="time"
+        name="endTime"
+        [(ngModel)]="formTodo.endTime"
+        class="w-full border border-gray-300 rounded px-3 py-2"
+        placeholder="End time (optional)"
+      />
+
+      <!-- COLOR SELECTION -->
+      <div class="flex justify-between items-center">
+        <label class="text-sm font-medium">Color:</label>
+        <div class="flex gap-3">
+          <button
+            type="button"
+            class="w-6 h-6 rounded-full border-2 bg-yellow-200"
+            [ngClass]="formTodo.color === 'yellow' ? 'border-yellow-600' : 'border-transparent'"
+            (click)="formTodo.color = 'yellow'"
+            aria-label="Yellow"
+          ></button>
+          <button
+            type="button"
+            class="w-6 h-6 rounded-full border-2 bg-green-200"
+            [ngClass]="formTodo.color === 'green' ? 'border-green-600' : 'border-transparent'"
+            (click)="formTodo.color = 'green'"
+            aria-label="Green"
+          ></button>
+          <button
+            type="button"
+            class="w-6 h-6 rounded-full border-2 bg-blue-200"
+            [ngClass]="formTodo.color === 'blue' ? 'border-blue-600' : 'border-transparent'"
+            (click)="formTodo.color = 'blue'"
+            aria-label="Blue"
+          ></button>
+        </div>
+      </div>
 
       <!-- PRIORITY ICON SELECTION -->
       <div class="flex justify-between items-center">
@@ -71,16 +113,22 @@
   <div class="p-4 grid grid-cols-1 min-[468px]:grid-cols-2 min-[768px]:grid-cols-3 lg:grid-cols-4 gap-4">
     <div
       *ngFor="let todo of getActiveTodos()"
-      class="bg-yellow-100 rounded-lg p-4 shadow flex flex-col justify-between w-full aspect-square overflow-hidden"
+      class="rounded-lg p-4 shadow flex flex-col justify-between w-full aspect-square overflow-hidden"
+      [ngClass]="todoService.getColorClass(todo.color)"
+      draggable="true"
+      (dragstart)="onDragStart(todo, $event)"
+      (dragover)="onDragOver($event)"
+      (drop)="onDrop(todo, $event)"
+      (dragend)="onDragEnd()"
     >
       <!-- WEEKDAY + ICONS -->
       <div class="flex justify-between items-start">
         <span class="text-sm text-black-500 font-bold uppercase">{{ getWeekday(todo.date) }}</span>
         <div class="flex gap-1">
-          <button (click)="editTodo(todo)" class="p-1 hover:bg-blue-100 rounded">
+          <button (click)="editTodo(todo)" class="p-1 hover:bg-blue-100 rounded" draggable="false">
             <img src="edit.png" alt="edit" class="w-4 h-4" />
           </button>
-          <button (click)="confirmDelete(todo)" class="p-1 hover:bg-red-100 rounded">
+          <button (click)="confirmDelete(todo)" class="p-1 hover:bg-red-100 rounded" draggable="false">
             <img src="delete.png" alt="delete" class="w-4 h-4" />
           </button>
         </div>
@@ -90,6 +138,8 @@
       <div class="mt-2 flex justify-between items-center">
         <p class="text-base break-words line-clamp-3">{{ todo.description }}</p>
       </div>
+
+      <div class="mt-1 text-sm text-gray-700 font-semibold">{{ getTimeLabel(todo) }}</div>
 
       <!-- STATUS + PRIORITY -->
       <div class="flex justify-between items-center mt-2 text-sm text-gray-600">
