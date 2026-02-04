@@ -1,7 +1,7 @@
 <!-- CREATE / EDIT MODAL -->
-<div *ngIf="showForm" class="fixed inset-0 flex items-center justify-center z-50 backdrop-blur-sm bg-black/30">
-  <div class="bg-white p-6 rounded-lg w-80 shadow-xl">
-    <h3 class="text-lg font-bold mb-4">{{ isEditMode ? 'Edit Task' : 'Create Task' }}</h3>
+<div *ngIf="showForm" class="fixed inset-0 flex items-center justify-center z-50 backdrop-blur-sm bg-black/40">
+  <div class="panel p-6 rounded-2xl w-80 shadow-lift">
+    <h3 class="text-lg font-semibold mb-4">{{ isEditMode ? 'Edit Task' : 'Create Task' }}</h3>
     <form #todoForm="ngForm" (ngSubmit)="saveTodo()" class="space-y-3">
       <input
         type="text"
@@ -9,28 +9,38 @@
         placeholder="Description"
         required
         [(ngModel)]="formTodo.description"
-        class="w-full border border-gray-300 rounded px-3 py-2"
+        class="input"
       />
       <input
         type="date"
         name="date"
         required
         [(ngModel)]="formTodo.date"
-        class="w-full border border-gray-300 rounded px-3 py-2"
+        class="input"
       />
       <input
         type="time"
         name="time"
         required
         [(ngModel)]="formTodo.time"
-        class="w-full border border-gray-300 rounded px-3 py-2"
+        class="input"
       />
+
+      <div class="flex items-center justify-between">
+        <label class="text-sm font-medium">Zeitraum?</label>
+        <button type="button" class="theme-toggle" [class.theme-toggle-dark]="useTimeRange" (click)="useTimeRange = !useTimeRange" aria-label="Toggle time range">
+          <span></span>
+        </button>
+      </div>
+
       <input
+        *ngIf="useTimeRange"
         type="time"
         name="endTime"
+        required
         [(ngModel)]="formTodo.endTime"
-        class="w-full border border-gray-300 rounded px-3 py-2"
-        placeholder="End time (optional)"
+        class="input"
+        placeholder="End time"
       />
 
       <!-- COLOR SELECTION -->
@@ -65,33 +75,45 @@
       <div class="flex justify-between items-center">
         <label class="text-sm font-medium">Priority:</label>
         <div class="flex gap-3">
-          <img
-            src="low.png"
-            alt="Low"
-            class="w-7 h-7 cursor-pointer border-2 rounded-full p-1"
-            [ngClass]="formTodo.priority === 'low' ? 'border-blue-500 bg-blue-100' : 'border-transparent'"
+          <button
+            type="button"
+            class="icon-btn w-9 h-9"
+            [ngClass]="formTodo.priority === 'low' ? 'ring-2 ring-[color:var(--accent)]' : ''"
             (click)="formTodo.priority = 'low'"
-          />
-          <img
-            src="medium.png"
-            alt="Medium"
-            class="w-7 h-7 cursor-pointer border-2 rounded-full p-1"
-            [ngClass]="formTodo.priority === 'medium' ? 'border-yellow-500 bg-yellow-100' : 'border-transparent'"
+            aria-label="Low priority"
+          >
+            <svg class="priority-icon priority-low" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12M7 13l5 5 5-5"/>
+            </svg>
+          </button>
+          <button
+            type="button"
+            class="icon-btn w-9 h-9"
+            [ngClass]="formTodo.priority === 'medium' ? 'ring-2 ring-[color:var(--accent)]' : ''"
             (click)="formTodo.priority = 'medium'"
-          />
-          <img
-            src="high.png"
-            alt="High"
-            class="w-7 h-7 cursor-pointer border-2 rounded-full p-1"
-            [ngClass]="formTodo.priority === 'high' ? 'border-red-500 bg-red-100' : 'border-transparent'"
+            aria-label="Medium priority"
+          >
+            <svg class="priority-icon priority-medium" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14"/>
+            </svg>
+          </button>
+          <button
+            type="button"
+            class="icon-btn w-9 h-9"
+            [ngClass]="formTodo.priority === 'high' ? 'ring-2 ring-[color:var(--accent)]' : ''"
             (click)="formTodo.priority = 'high'"
-          />
+            aria-label="High priority"
+          >
+            <svg class="priority-icon priority-high" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 18V6M7 11l5-5 5 5"/>
+            </svg>
+          </button>
         </div>
       </div>
 
       <div class="flex justify-end gap-2 pt-2">
-        <button type="button" (click)="cancelForm()" class="px-3 py-1 text-gray-600 hover:underline">Cancel</button>
-        <button type="submit" [disabled]="!todoForm.form.valid" class="bg-green-500 hover:bg-green-600 text-white px-4 py-1 rounded">
+        <button type="button" (click)="cancelForm()" class="btn btn-ghost text-sm">Cancel</button>
+        <button type="submit" [disabled]="!todoForm.form.valid" class="btn btn-primary">
           {{ isEditMode ? 'Save' : 'Create' }}
         </button>
       </div>
@@ -100,20 +122,25 @@
 </div>
 
 <!-- TASK LIST + HEADER -->
-<div *ngIf="!showForm && isStartPage" class="p-4 max-w-screen-xl text-left">
-  <div class="flex items-center gap-8 mb-4">
-    <h1 class="text-2xl font-bold text-gray-800">TODOs</h1>
-    <button (click)="openCreateForm()" class="flex items-center text-black px-4 py-2 gap-2">
-      <img src="create.png" alt="create" class="w-4 h-4 hover:bg-gray-100 rounded" />
-      Create
+<div *ngIf="!showForm && isStartPage" class="text-left">
+  <div class="flex items-center justify-between gap-6 mb-6">
+    <div>
+      <p class="text-xs uppercase tracking-[0.28em] text-muted">Workspace</p>
+      <h1 class="text-3xl font-semibold">TODOs</h1>
+    </div>
+    <button (click)="openCreateForm()" class="btn btn-primary">
+      Create Task
+      <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14M5 12h14"/>
+      </svg>
     </button>
   </div>
 
   <!-- GRID OF TODOS -->
-  <div class="p-4 grid grid-cols-1 min-[468px]:grid-cols-2 min-[768px]:grid-cols-3 lg:grid-cols-4 gap-4">
+  <div class="grid grid-cols-1 min-[468px]:grid-cols-2 min-[768px]:grid-cols-3 lg:grid-cols-4 gap-5">
     <div
       *ngFor="let todo of getActiveTodos()"
-      class="rounded-lg p-4 shadow flex flex-col justify-between w-full aspect-square overflow-hidden"
+      class="todo-card p-4 flex flex-col justify-between w-full aspect-square overflow-hidden"
       [ngClass]="todoService.getColorClass(todo.color)"
       draggable="true"
       (dragstart)="onDragStart(todo, $event)"
@@ -123,50 +150,65 @@
     >
       <!-- WEEKDAY + ICONS -->
       <div class="flex justify-between items-start">
-        <span class="text-sm text-black-500 font-bold uppercase">{{ getWeekday(todo.date) }}</span>
+        <span class="text-xs font-semibold uppercase tracking-[0.2em]">{{ getWeekday(todo.date) }}</span>
         <div class="flex gap-1">
-          <button (click)="editTodo(todo)" class="p-1 hover:bg-blue-100 rounded" draggable="false">
-            <img src="edit.png" alt="edit" class="w-4 h-4" />
+          <button (click)="editTodo(todo)" class="icon-btn w-8 h-8" draggable="false" aria-label="Edit">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 20h9"/>
+              <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4 12.5-12.5z"/>
+            </svg>
           </button>
-          <button (click)="confirmDelete(todo)" class="p-1 hover:bg-red-100 rounded" draggable="false">
-            <img src="delete.png" alt="delete" class="w-4 h-4" />
+          <button (click)="confirmDelete(todo)" class="icon-btn w-8 h-8" draggable="false" aria-label="Delete">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 6h18"/>
+              <path stroke-linecap="round" stroke-linejoin="round" d="M8 6V4h8v2"/>
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 6l1 14h10l1-14"/>
+            </svg>
           </button>
         </div>
       </div>
 
       <!-- DESCRIPTION -->
-      <div class="mt-2 flex justify-between items-center">
+      <div class="mt-3 flex justify-between items-center">
         <p class="text-base break-words line-clamp-3">{{ todo.description }}</p>
       </div>
 
-      <div class="mt-1 text-sm text-gray-700 font-semibold">{{ getTimeLabel(todo) }}</div>
+      <div class="mt-1 text-sm font-semibold text-muted">{{ getTimeLabel(todo) }}</div>
 
       <!-- STATUS + PRIORITY -->
-      <div class="flex justify-between items-center mt-2 text-sm text-gray-600">
+      <div class="flex justify-between items-center mt-3 text-sm text-muted">
         <button
           (click)="cycleStatus(todo)"
-          class="text-xs font-semibold px-2 py-1 rounded text-white"
+          class="status-pill"
           [ngClass]="{
-            'bg-gray-500': todo.status === 'open',
-            'bg-blue-500': todo.status === 'in-progress',
-            'bg-green-600': todo.status === 'done'
+            'status-open': todo.status === 'open',
+            'status-progress': todo.status === 'in-progress',
+            'status-done': todo.status === 'done'
           }"
         >
           {{ todo.status.toUpperCase() }}
         </button>
-        <img [src]="getPriorityIcon(todo.priority)" alt="priority-icon" class="w-7 h-7" />
+        <svg class="priority-icon" [ngClass]="{
+          'priority-low': todo.priority === 'low',
+          'priority-medium': todo.priority === 'medium',
+          'priority-high': todo.priority === 'high'
+        }" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path *ngIf="todo.priority === 'low'" stroke-linecap="round" stroke-linejoin="round" d="M12 6v12M7 13l5 5 5-5"/>
+          <path *ngIf="todo.priority === 'medium'" stroke-linecap="round" stroke-linejoin="round" d="M5 12h14"/>
+          <path *ngIf="todo.priority === 'high'" stroke-linecap="round" stroke-linejoin="round" d="M12 18V6M7 11l5-5 5 5"/>
+        </svg>
       </div>
     </div>
   </div>
 </div>
 
 <!-- DELETE CONFIRMATION -->
-<div *ngIf="todoToDelete && isStartPage" class="fixed inset-0 flex items-center justify-center z-50 backdrop-blur-sm bg-white/30">
-  <div class="bg-white p-5 rounded-lg shadow-lg w-64">
-    <p class="mb-4 text-center">Are you sure you want to delete this task?</p>
+<div *ngIf="todoToDelete && isStartPage" class="fixed inset-0 flex items-center justify-center z-50 backdrop-blur-sm bg-black/40">
+  <div class="panel p-5 rounded-2xl shadow-lift w-64">
+    <p class="mb-4 text-center text-sm">Are you sure you want to delete this task?</p>
     <div class="flex justify-between">
-      <button (click)="cancelDelete()" class="text-sm text-gray-600 hover:underline">Cancel</button>
-      <button (click)="archiveTodo(todoToDelete)" class="text-sm bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded">
+      <button (click)="cancelDelete()" class="btn btn-ghost text-xs">Cancel</button>
+      <button (click)="archiveTodo(todoToDelete)" class="btn btn-danger text-xs">
         Yes
       </button>
     </div>

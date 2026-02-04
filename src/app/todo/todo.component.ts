@@ -19,6 +19,7 @@ import {Subscription} from 'rxjs';
 export class TodoComponent implements OnInit, OnDestroy{
   showForm = false;
   isEditMode = false;
+  useTimeRange = false;
   formTodo: Todo = this.createEmptyTodo();
   todoToDelete: Todo | null = null;
   draggedTodoId: string | null = null;
@@ -61,14 +62,15 @@ export class TodoComponent implements OnInit, OnDestroy{
 
   editTodo(todo: Todo) {
     this.formTodo = { ...todo };
+    this.useTimeRange = !!(todo.endTime && todo.endTime !== todo.time);
     this.isEditMode = true;
     this.showForm = true;
   }
 
   saveTodo() {
     this.todoService.ensureNotificationPermission();
-    if (this.formTodo.time && !this.formTodo.endTime) {
-      this.formTodo.endTime = this.formTodo.time;
+    if (!this.useTimeRange) {
+      this.formTodo.endTime = '';
     }
     if (this.isEditMode) {
       this.todoService.update(this.formTodo);
@@ -82,6 +84,7 @@ export class TodoComponent implements OnInit, OnDestroy{
 
   cancelForm() {
     this.formTodo = this.createEmptyTodo();
+    this.useTimeRange = false;
     this.showForm = false;
     this.isEditMode = false;
   }

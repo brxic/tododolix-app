@@ -58,11 +58,11 @@ export class TodoService {
   getColorClass(color: TodoColor | string): string {
     switch (color) {
       case 'green':
-        return 'bg-green-100';
+        return 'card-green';
       case 'blue':
-        return 'bg-blue-100';
+        return 'card-blue';
       default:
-        return 'bg-yellow-100';
+        return 'card-yellow';
     }
   }
 
@@ -204,25 +204,40 @@ export class TodoService {
       this.clearNotifications(todo.id);
       return;
     }
-    const dueTime = todo.endTime || todo.time;
-    if (!todo.date || !dueTime) {
+    if (!todo.date || !todo.time) {
       this.clearNotifications(todo.id);
       return;
     }
 
-    const target = new Date(`${todo.date}T${dueTime}:00`);
-    if (Number.isNaN(target.getTime())) {
+    const start = new Date(`${todo.date}T${todo.time}:00`);
+    if (Number.isNaN(start.getTime())) {
       return;
     }
 
     this.clearNotifications(todo.id);
 
     const now = Date.now();
-    const reminders: Array<{ at: number; label: string }> = [
-      { at: target.getTime() - 15 * 60 * 1000, label: 'In 15 minutes' },
-      { at: target.getTime(), label: 'Now' },
-      { at: target.getTime() + 2 * 60 * 1000, label: '2 min overdue' }
-    ];
+    const reminders: Array<{ at: number; label: string; timeRef: 'start' | 'end' }> = [];
+    const startAt = start.getTime();
+    const endAtRaw = todo.endTime ? new Date(`${todo.date}T${todo.endTime}:00`).getTime() : null;
+    const hasRange = !!(endAtRaw && endAtRaw > startAt);
+    const endAt = hasRange ? endAtRaw : null;
+
+    reminders.push(
+      { at: startAt - 15 * 60 * 1000, label: 'In 15 Minuten', timeRef: 'start' },
+      { at: startAt, label: 'Jetzt', timeRef: 'start' }
+    );
+
+    if (hasRange && endAt) {
+      reminders.push(
+        { at: startAt + 2 * 60 * 1000, label: 'Jetzt', timeRef: 'start' },
+        { at: endAt - 15 * 60 * 1000, label: 'In 15 Min fertig', timeRef: 'end' },
+        { at: endAt, label: 'Fertig', timeRef: 'end' },
+        { at: endAt + 2 * 60 * 1000, label: '2 Min überfällig', timeRef: 'end' }
+      );
+    } else {
+      reminders.push({ at: startAt + 2 * 60 * 1000, label: '2 Min überfällig', timeRef: 'start' });
+    }
 
     const timers: number[] = [];
     for (const reminder of reminders) {
@@ -230,7 +245,8 @@ export class TodoService {
         continue;
       }
       const timeoutId = window.setTimeout(() => {
-        const timeLabel = target.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const refDate = reminder.timeRef === 'end' && endAt ? new Date(endAt) : start;
+        const timeLabel = refDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         new Notification(todo.description, { body: `${reminder.label} • ${timeLabel}` });
       }, reminder.at - now);
       timers.push(timeoutId);

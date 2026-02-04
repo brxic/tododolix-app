@@ -1,31 +1,40 @@
-<div class="p-4">
-  <div class="flex items-center justify-between mb-4">
-    <h2 class="text-2xl font-bold">Archive <span class="inline-block ml-2">
-      <img src="archive.png" alt="archive" class="w-8 h-8 hidden sm:inline">
-    </span></h2>
-    <button (click)="clearArchive()" class="text-red-500 flex items-center gap-2 hover:underline">
-      Clear archive <img src="cleararchive.png" alt="clear" class="w-5 h-5">
+<div>
+  <div class="flex items-center justify-between mb-6">
+    <div>
+      <p class="text-xs uppercase tracking-[0.28em] text-muted">History</p>
+      <h2 class="text-3xl font-semibold">Archive</h2>
+    </div>
+    <button (click)="clearArchive()" class="btn btn-danger">
+      Clear archive
     </button>
   </div>
 
-  <div *ngFor="let todo of archivedTodos" class="p-4 rounded shadow mb-3 flex justify-between items-center" [ngClass]="todoService.getColorClass(todo.color)">
+  <div *ngFor="let todo of archivedTodos" class="p-4 rounded-2xl mb-4 flex justify-between items-center todo-card" [ngClass]="todoService.getColorClass(todo.color)">
     <div>
-      <div class="text-sm font-bold">{{ getWeekday(todo.date) }}</div>
-      <div class="text-base">{{ todo.description }}</div>
-      <div class="text-sm font-semibold text-gray-700">{{ getTimeLabel(todo) }}</div>
+      <div class="text-xs uppercase tracking-[0.2em] font-semibold">{{ getWeekday(todo.date) }}</div>
+      <div class="text-base mt-1">{{ todo.description }}</div>
+      <div class="text-sm font-semibold text-muted">{{ getTimeLabel(todo) }}</div>
     </div>
 
     <div class="flex items-center gap-4">
-      <button (click)="restoreTodo(todo)" class="text-xs px-3 py-1 rounded bg-gray-200 hover:bg-gray-300">
+      <button (click)="restoreTodo(todo)" class="btn btn-ghost text-xs">
         Restore
       </button>
       <span [ngClass]="{
-        'bg-green-500': todo.status === 'done',
-        'bg-red-500': todo.status === 'open' || todo.status === 'in-progress'
-      }" class="text-white text-xs px-3 py-1 rounded font-bold">
+        'status-done': todo.status === 'done',
+        'status-archived': todo.status === 'open' || todo.status === 'in-progress'
+      }" class="status-pill">
         {{ todo.status === 'done' ? 'DONE' : 'DELETED' }}
       </span>
-      <img [src]="getPriorityIcon(todo.priority)" class="w-8 h-7" alt="priority" />
+      <svg class="priority-icon" [ngClass]="{
+        'priority-low': todo.priority === 'low',
+        'priority-medium': todo.priority === 'medium',
+        'priority-high': todo.priority === 'high'
+      }" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path *ngIf="todo.priority === 'low'" stroke-linecap="round" stroke-linejoin="round" d="M12 6v12M7 13l5 5 5-5"/>
+        <path *ngIf="todo.priority === 'medium'" stroke-linecap="round" stroke-linejoin="round" d="M5 12h14"/>
+        <path *ngIf="todo.priority === 'high'" stroke-linecap="round" stroke-linejoin="round" d="M12 18V6M7 11l5-5 5 5"/>
+      </svg>
     </div>
   </div>
 </div>

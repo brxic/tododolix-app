@@ -1,34 +1,86 @@
-<header class="flex items-center justify-between px-4 py-2 bg-white shadow relative z-50">
-  <!-- Quick Create in corner -->
-  <div>
-    <button (click)="triggerQuickCreate()" title="Quick Create" class="flex items-center gap-2">
-      <img src="create.png" alt="Quick-Create" class="w-7 h-7 hover:bg-gray-100 rounded" />
-    </button>
+<div class="min-h-screen flex">
+  <div *ngIf="menuOpen" class="sidebar-backdrop" [class.sidebar-backdrop-active]="menuActive" (click)="toggleMenu()"></div>
+  <aside
+    *ngIf="menuOpen"
+    class="panel-soft shadow-soft m-4 mr-0 p-4 flex flex-col gap-6 w-64 sidebar sidebar-drawer"
+    [class.sidebar-drawer-open]="menuActive"
+  >
+    <div class="flex items-center justify-between gap-2">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl flex items-center justify-center bg-[color:var(--accent)]/15 border border-[color:var(--border)]">
+          <img src="favicon.ico" alt="Tododolix" class="w-6 h-6" />
+        </div>
+        <div class="brand-name text-lg font-semibold">Tododolix</div>
+      </div>
+      <button (click)="toggleMenu()" class="icon-btn" aria-label="Toggle menu">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 6l12 12M18 6l-12 12"/>
+        </svg>
+      </button>
+    </div>
+
+    <nav class="flex flex-col gap-2">
+      <a routerLink="/" routerLinkActive="nav-active" class="nav-link">
+        <span class="nav-dot"></span>
+        <span class="nav-label">Tasks</span>
+      </a>
+      <a routerLink="/archive" routerLinkActive="nav-active" class="nav-link">
+        <span class="nav-dot"></span>
+        <span class="nav-label">Archive</span>
+      </a>
+      <a routerLink="/howtouse" routerLinkActive="nav-active" class="nav-link">
+        <span class="nav-dot"></span>
+        <span class="nav-label">How to Use</span>
+      </a>
+    </nav>
+
+    <div class="mt-auto flex flex-col gap-3">
+      <div class="flex items-center justify-between gap-3">
+        <span class="text-xs uppercase tracking-[0.2em] text-muted sidebar-text">Dark Mode</span>
+        <button
+          (click)="toggleTheme()"
+          class="theme-toggle"
+          [class.theme-toggle-dark]="isDark"
+          [attr.aria-pressed]="isDark"
+          aria-label="Toggle dark mode"
+        >
+          <span></span>
+        </button>
+      </div>
+      <div class="text-xs text-muted sidebar-text">Soft desktop-first layout</div>
+    </div>
+  </aside>
+
+  <div class="flex-1 flex flex-col">
+    <header class="panel shadow-soft mx-4 mt-4 p-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <button (click)="toggleMenu()" class="icon-btn" aria-label="Toggle menu">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+          </svg>
+        </button>
+        <span class="text-xs uppercase tracking-[0.2em] text-muted">Active Tasks</span>
+        <span class="pill">{{ taskCount }}</span>
+        <button (click)="triggerQuickCreate()" class="btn btn-primary">
+          New Task
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14M5 12h14"/>
+          </svg>
+        </button>
+      </div>
+      <div class="flex items-center gap-2">
+        <button (click)="toggleTheme()" class="btn btn-ghost">
+          <span class="text-sm">{{ isDark ? 'Dark' : 'Light' }}</span>
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2M12 19v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M3 12h2M19 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41M12 7a5 5 0 100 10 5 5 0 000-10z"/>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <main class="flex-1 px-4 pb-8 pt-6">
+      <router-outlet></router-outlet>
+      <app-todo *ngIf="isNotStartPage"></app-todo>
+    </main>
   </div>
-
-  <!-- Task Counter -->
-  <div class="text-center font-bold">ToDo: {{ taskCount }}</div>
-
-<div class="flex items-center gap-10">
-  <button (click)="toggleMenu()" class="w-8 h-8">
-    <img src="burger.png" alt="menu" class="w-8 h-8" />
-  </button>
 </div>
-</header>
-
-<div *ngIf="menuOpen"
-     (click)="toggleMenu()"
-     class="fixed inset-0  z-40 transition-opacity duration-300 backdrop-blur-sm bg-white/30">
-</div>
-
-<nav [class.translate-x-0]="menuOpen"
-     [class.translate-x-full]="!menuOpen"
-     class="fixed top-0 right-0 w-64 h-full bg-white z-50 transform transition-transform duration-300
-            flex flex-col justify-center items-center gap-10 text-xl shadow-lg">
-  <a routerLink="/" routerLinkActive="font-bold underline" (click)="toggleMenu()">Tasks</a>
-  <a routerLink="/archive" routerLinkActive="font-bold underline" (click)="toggleMenu()">Archive</a>
-  <a routerLink="/howtouse" routerLinkActive="font-bold underline" (click)="toggleMenu()">How to Use</a>
-</nav>
-
-<router-outlet></router-outlet>
-<app-todo *ngIf="isNotStartPage"></app-todo>
