@@ -1,59 +1,117 @@
-# TododolixBasil
+# Tododolix
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.7.
+Tododolix is a ToDo app with **two product surfaces in one repository**:
+- `desktop`: optimized for mouse workflows, wide layouts, and focused planning
+- `mobile`: optimized for quick capture and on-the-go usage
 
-## Development server
+Both versions share the same core logic (tasks, status flow, reminder rules) while keeping platform-specific UI and source trees.
 
-To start a local development server, run:
+## Intention
+
+The project follows three goals:
+1. **Clear focus**: capture, prioritize, and complete tasks quickly.
+2. **Pragmatic product development**: optimize mobile and desktop independently without splitting into separate repos.
+3. **Local data ownership**: data stays local on each device by default.
+
+## Project Structure
+
+- `src-mobile/` Mobile Angular app
+- `src-desktop/` Desktop Angular app
+- `electron/` Electron shell for desktop packaging
+- `public/` shared static assets
+- `scripts/` utility scripts (e.g. icon generation)
+
+## Tech Stack
+
+- Angular
+- Tailwind CSS (via `@import "tailwindcss"`)
+- Electron (desktop packaging)
+- Local persistence via `localStorage`
+
+## Core Features
+
+- Create, edit, archive, and restore tasks
+- Status flow: `open -> in-progress -> done`
+- Drag & drop ordering for active tasks
+- Color and priority tagging
+- Smart quick input in create/edit modal (parsing date/time/priority/color)
+- Configuration page:
+  - Language (DE/EN)
+  - Theme (Light/Dark/System)
+  - Time format (24h/12h)
+- Task page filters:
+  - Time: All / Today / Morning / Afternoon / Week
+  - Priority: All / High / Medium / Low
+
+## Reminder Logic (Current)
+
+Reminders are derived from existing task data:
+- No reminders for `done` or `archived`
+- Priority-based pre-reminders
+- Short-notice tasks are handled with condensed reminder timing
+- End-time reminders when a valid range exists (`endTime > start`)
+- Priority-aware reminder wording
+
+Note: notifications currently rely on browser notifications.
+
+## Local Setup
+
+### Requirements
+
+- Node.js (current LTS recommended)
+- npm
+
+### Install
 
 ```bash
-ng serve
+npm install
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+## Development Commands
 
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+### Mobile
 
 ```bash
-ng generate component component-name
+npm run start:mobile
+npm run build:mobile
+npm run test:mobile
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+### Desktop (Web)
 
 ```bash
-ng generate --help
+npm run start:desktop
+npm run build:desktop
+npm run test:desktop
 ```
 
-## Building
-
-To build the project run:
+### Electron Desktop
 
 ```bash
-ng build
+npm run generate:icon
+npm run electron:win
+
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+## Build Outputs
 
-## Running unit tests
+- Desktop build: `dist/tododolix-basil`
+- Mobile build: `dist/tododolix-mobile`
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+## Data Storage
 
-```bash
-ng test
-```
+Tasks are stored locally:
+- No cloud sync by default
+- Mobile and desktop therefore maintain separate local data states
 
-## Running end-to-end tests
+## Product Principles (Current)
 
-For end-to-end (e2e) testing, run:
+- Avoid unnecessary over-automation
+- Prefer user control (e.g. no aggressive forced presets)
+- UI can differ by platform while behavior stays consistent
 
-```bash
-ng e2e
-```
+## Natural Next Steps
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+- Native Android integration via Capacitor
+- Optional sync mode (opt-in)
+- Additional desktop power-user features and shortcuts
