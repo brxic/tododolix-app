@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Tododolix</string>
+    <string name="title_activity_main">Tododolix</string>
+    <string name="package_name">com.basil.tododolix</string>
+    <string name="custom_url_scheme">com.basil.tododolix</string>
+</resources>

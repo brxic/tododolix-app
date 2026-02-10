@@ -1,117 +1,184 @@
 # Tododolix
 
 Tododolix is a ToDo app with **two product surfaces in one repository**:
-- `desktop`: optimized for mouse workflows, wide layouts, and focused planning
+- `desktop`: optimized for mouse workflows, wider layouts, and focused planning
 - `mobile`: optimized for quick capture and on-the-go usage
 
-Both versions share the same core logic (tasks, status flow, reminder rules) while keeping platform-specific UI and source trees.
+Both versions share the same core behavior (task model, status flow, reminder logic), but use platform-specific UI.
 
-## Intention
+## Product Intention
 
-The project follows three goals:
-1. **Clear focus**: capture, prioritize, and complete tasks quickly.
-2. **Pragmatic product development**: optimize mobile and desktop independently without splitting into separate repos.
-3. **Local data ownership**: data stays local on each device by default.
+The project is built around three principles:
+1. **Fast task flow**: capture, prioritize, execute, archive.
+2. **One repo, two UXs**: desktop and mobile can evolve independently without splitting codebases.
+3. **User-first control**: avoid over-automation and keep important decisions in user hands.
 
-## Project Structure
+## Architecture
 
-- `src-mobile/` Mobile Angular app
-- `src-desktop/` Desktop Angular app
-- `electron/` Electron shell for desktop packaging
+- `src-desktop/` Desktop Angular app source
+- `src-mobile/` Mobile Angular app source
+- `electron/` Electron shell (desktop runtime + packaging)
+- `capacitor.config.ts` Capacitor config (mobile runtime bridge)
 - `public/` shared static assets
-- `scripts/` utility scripts (e.g. icon generation)
 
 ## Tech Stack
 
 - Angular
-- Tailwind CSS (via `@import "tailwindcss"`)
-- Electron (desktop packaging)
-- Local persistence via `localStorage`
+- Tailwind CSS
+- Electron (desktop app packaging)
+- Capacitor (mobile app packaging / Android bridge)
+- Local persistence with `localStorage`
 
-## Core Features
+## Current Core Features
 
-- Create, edit, archive, and restore tasks
+- Create / edit / archive / restore tasks
 - Status flow: `open -> in-progress -> done`
-- Drag & drop ordering for active tasks
-- Color and priority tagging
-- Smart quick input in create/edit modal (parsing date/time/priority/color)
-- Configuration page:
+- Drag & drop ordering (active tasks)
+- Priority + color tags
+- Quick input parsing in create/edit modal
+- Config page:
   - Language (DE/EN)
   - Theme (Light/Dark/System)
   - Time format (24h/12h)
-- Task page filters:
+- Task filters:
   - Time: All / Today / Morning / Afternoon / Week
   - Priority: All / High / Medium / Low
 
 ## Reminder Logic (Current)
 
-Reminders are derived from existing task data:
 - No reminders for `done` or `archived`
-- Priority-based pre-reminders
-- Short-notice tasks are handled with condensed reminder timing
+- Priority-based reminder timing
+- Short-notice tasks are handled with condensed timing
 - End-time reminders when a valid range exists (`endTime > start`)
 - Priority-aware reminder wording
 
-Note: notifications currently rely on browser notifications.
-
-## Local Setup
-
-### Requirements
+## Prerequisites
 
 - Node.js (current LTS recommended)
 - npm
 
-### Install
+For Android builds:
+- Android Studio
+- Android SDK + platform tools
+- JDK 17+
+
+## Install
 
 ```bash
 npm install
 ```
 
-## Development Commands
+## Desktop Workflows
 
-### Mobile
+### 1) Run Desktop UI in browser
+
+```bash
+npm run start:desktop
+```
+
+Open: `http://localhost:4200`
+
+### 2) Run Desktop app via Electron (dev)
+
+```bash
+npm run electron:dev
+```
+
+### 3) Build Desktop web bundle
+
+```bash
+npm run build:desktop
+```
+
+### 4) Package Desktop app (Electron)
+
+```bash
+npm run electron:dist
+```
+
+Windows target only:
+
+```bash
+npm run electron:win
+```
+
+## Mobile Workflows (Android via Capacitor)
+
+### First-time setup
+
+1. Build mobile web assets:
+
+```bash
+npm run mobile:build
+```
+
+2. Add Android platform once:
+
+```bash
+npm run mobile:android:add
+```
+
+### Daily development flow
+
+1. Rebuild and sync web assets into Android project:
+
+```bash
+npm run mobile:android:sync
+```
+
+2. Open Android Studio project:
+
+```bash
+npm run mobile:android:open
+```
+
+3. Run from Android Studio on emulator/device.
+
+Optional CLI run (if Android toolchain/device is configured):
+
+```bash
+npm run mobile:android:run
+```
+
+### Mobile web-only preview
 
 ```bash
 npm run start:mobile
-npm run build:mobile
-npm run test:mobile
 ```
 
-### Desktop (Web)
+Open: `http://localhost:4200`
+
+## All Relevant Commands
 
 ```bash
 npm run start:desktop
 npm run build:desktop
 npm run test:desktop
+npm run electron:dev
+npm run electron:dist
+
+npm run start:mobile
+npm run mobile:build
+npm run test:mobile
+npm run mobile:android:add
+npm run mobile:android:sync
+npm run mobile:android:open
+npm run mobile:android:run
 ```
 
-### Electron Desktop
+## Build Output Paths
 
-```bash
-npm run generate:icon
-npm run electron:win
-
-```
-
-## Build Outputs
-
-- Desktop build: `dist/tododolix-basil`
-- Mobile build: `dist/tododolix-mobile`
+- Desktop web output: `dist/tododolix-basil`
+- Mobile web output: `dist/tododolix-mobile/browser`
 
 ## Data Storage
 
-Tasks are stored locally:
-- No cloud sync by default
-- Mobile and desktop therefore maintain separate local data states
+Data is local by default:
+- No cloud sync enabled by default
+- Mobile and desktop therefore maintain separate local datasets
 
-## Product Principles (Current)
+## Notes
 
-- Avoid unnecessary over-automation
-- Prefer user control (e.g. no aggressive forced presets)
-- UI can differ by platform while behavior stays consistent
-
-## Natural Next Steps
-
-- Native Android integration via Capacitor
-- Optional sync mode (opt-in)
-- Additional desktop power-user features and shortcuts
+- Electron is the desktop runtime.
+- Capacitor is the mobile runtime bridge.
+- If this environment cannot access your npm registry, run `npm install` in a network-enabled environment before using Capacitor commands.
