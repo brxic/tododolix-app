@@ -1,0 +1,68 @@
+<div class="desktop-shell" [class.menu-collapsed]="isMenuCollapsed">
+  <main class="desktop-main">
+    <header class="desktop-header panel shadow-soft">
+      <div>
+        <p class="text-xs uppercase tracking-[0.22em] text-muted">Workspace</p>
+        <div class="desktop-header-headline">
+          <h1 class="desktop-header-title">{{ pageTitle }}</h1>
+          <span *ngIf="isStartPage" class="desktop-counter-pill">{{ taskCount }}</span>
+        </div>
+        <p class="text-sm text-muted mt-1">{{ pageSubtitle }}</p>
+      </div>
+
+      <div class="desktop-header-actions">
+        <button (click)="toggleThemeQuick()" class="icon-btn" aria-label="Toggle theme">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 12.79A9 9 0 1111.21 3c0 .3-.01.6-.01.9A7.1 7.1 0 0018.1 11c.3 0 .6 0 .9-.01z"/>
+          </svg>
+        </button>
+        <button *ngIf="isStartPage" (click)="triggerQuickCreate()" class="btn btn-primary">
+          {{ settings.t('create_task') }}
+        </button>
+        <button (click)="toggleMenu()" class="icon-btn" aria-label="Toggle menu">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <section class="desktop-content">
+      <router-outlet></router-outlet>
+      <app-todo *ngIf="isNotStartPage"></app-todo>
+    </section>
+  </main>
+
+  <aside class="desktop-sidebar panel-soft shadow-soft">
+    <div class="desktop-brand-row">
+      <div class="drawer-brand-mark">
+        <img src="favicon.ico" alt="Tododolix" class="w-6 h-6" />
+      </div>
+      <div>
+        <div class="desktop-brand-title">Tododolix</div>
+        <div class="text-xs text-muted">Desktop Workspace</div>
+      </div>
+    </div>
+
+    <div class="desktop-counter panel">
+      <div class="text-xs uppercase tracking-[0.2em] text-muted">{{ settings.t('nav_tasks') }}</div>
+      <div class="desktop-counter-value">{{ taskCount }}</div>
+      <div class="text-xs text-muted">{{ settings.t('app_subtitle') }}</div>
+    </div>
+
+    <nav class="desktop-nav">
+      <a routerLink="/" routerLinkActive="nav-active" [routerLinkActiveOptions]="{ exact: true }" class="nav-link">
+        {{ settings.t('nav_tasks') }}
+      </a>
+      <a routerLink="/archive" routerLinkActive="nav-active" class="nav-link">
+        {{ settings.t('nav_archive') }}
+      </a>
+      <a routerLink="/config" routerLinkActive="nav-active" class="nav-link">
+        {{ settings.t('nav_config') }}
+      </a>
+    </nav>
+
+    <div class="desktop-sidebar-footer">
+    </div>
+  </aside>
+</div>

@@ -1,0 +1,76 @@
+<section class="guide-page">
+  <p class="text-xs uppercase tracking-[0.28em] text-muted">{{ settings.t('nav_config') }}</p>
+  <h2 class="text-3xl font-semibold mb-2">{{ settings.t('config_title') }}</h2>
+  <p class="text-sm text-muted mb-3">{{ settings.t('config_sub') }}</p>
+
+  <article class="panel guide-card shadow-soft">
+    <div class="config-row">
+      <label class="config-label">{{ settings.t('language') }}</label>
+      <select [(ngModel)]="language" class="input config-select">
+        <option value="de">{{ settings.t('language_de') }}</option>
+        <option value="en">{{ settings.t('language_en') }}</option>
+      </select>
+    </div>
+
+    <div class="config-row">
+      <label class="config-label">{{ settings.t('theme') }}</label>
+      <select [(ngModel)]="themeMode" class="input config-select">
+        <option value="light">{{ settings.t('theme_light') }}</option>
+        <option value="dark">{{ settings.t('theme_dark') }}</option>
+        <option value="system">{{ settings.t('theme_system') }}</option>
+      </select>
+    </div>
+
+    <div class="config-row">
+      <label class="config-label">{{ settings.t('time_model') }}</label>
+      <select [(ngModel)]="timeFormat" class="input config-select">
+        <option value="24h">{{ settings.t('time_24h') }}</option>
+        <option value="12h">{{ settings.t('time_12h') }}</option>
+      </select>
+    </div>
+  </article>
+
+  <article class="panel guide-card shadow-soft">
+    <button (click)="toggleHelp()" class="help-toggle" type="button">
+      <span>{{ settings.t('help') }}</span>
+      <svg class="w-4 h-4 help-chevron" [class.rotate-180]="helpOpen" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/>
+      </svg>
+    </button>
+
+    <div class="help-content" [class.help-open]="helpOpen">
+      <h3 class="text-xl font-semibold mb-3">{{ settings.t('help_priority_title') }}</h3>
+      <div class="guide-grid">
+        <div class="guide-row">
+          <svg class="priority-icon priority-low" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12M7 13l5 5 5-5"/>
+          </svg>
+          <span>{{ settings.t('help_low') }}</span>
+        </div>
+        <div class="guide-row">
+          <svg class="priority-icon priority-medium" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14"/>
+          </svg>
+          <span>{{ settings.t('help_medium') }}</span>
+        </div>
+        <div class="guide-row">
+          <svg class="priority-icon priority-high" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 18V6M7 11l5-5 5 5"/>
+          </svg>
+          <span>{{ settings.t('help_high') }}</span>
+        </div>
+      </div>
+
+      <h3 class="text-xl font-semibold mt-5 mb-3">{{ settings.t('help_flow_title') }}</h3>
+      <ol class="guide-steps text-muted">
+        <li>{{ settings.t('help_flow_1') }}</li>
+        <li>{{ settings.t('help_flow_2') }}</li>
+        <li>{{ settings.t('help_flow_3') }}</li>
+        <li>{{ settings.t('help_flow_4') }}</li>
+      </ol>
+
+      <h3 class="text-xl font-semibold mt-5 mb-3">{{ settings.t('help_data_title') }}</h3>
+      <p class="text-muted">{{ settings.t('help_data_text') }}</p>
+    </div>
+  </article>
+</section>

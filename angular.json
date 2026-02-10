@@ -3,23 +3,23 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "tododolix-basil": {
+    "tododolix-desktop": {
       "projectType": "application",
       "schematics": {},
       "root": "",
-      "sourceRoot": "src",
+      "sourceRoot": "src-desktop",
       "prefix": "app",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
             "outputPath": "dist/tododolix-basil",
-            "index": "src/index.html",
-            "browser": "src/main.ts",
+            "index": "src-desktop/index.html",
+            "browser": "src-desktop/main.ts",
             "polyfills": [
               "zone.js"
             ],
-            "tsConfig": "tsconfig.app.json",
+            "tsConfig": "tsconfig.app.desktop.json",
             "assets": [
               {
                 "glob": "**/*",
@@ -27,7 +27,7 @@
               }
             ],
             "styles": [
-              "src/styles.css"
+              "src-desktop/styles.css"
             ],
             "scripts": [],
             "outputMode": "static"
@@ -60,10 +60,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "tododolix-basil:build:production"
+              "buildTarget": "tododolix-desktop:build:production"
             },
             "development": {
-              "buildTarget": "tododolix-basil:build:development"
+              "buildTarget": "tododolix-desktop:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -78,7 +78,7 @@
               "zone.js",
               "zone.js/testing"
             ],
-            "tsConfig": "tsconfig.spec.json",
+            "tsConfig": "tsconfig.spec.desktop.json",
             "assets": [
               {
                 "glob": "**/*",
@@ -86,7 +86,97 @@
               }
             ],
             "styles": [
-              "src/styles.css"
+              "src-desktop/styles.css"
+            ],
+            "scripts": []
+          }
+        }
+      }
+    },
+    "tododolix-mobile": {
+      "projectType": "application",
+      "schematics": {},
+      "root": "",
+      "sourceRoot": "src-mobile",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:application",
+          "options": {
+            "outputPath": "dist/tododolix-mobile",
+            "index": "src-mobile/index.html",
+            "browser": "src-mobile/main.ts",
+            "polyfills": [
+              "zone.js"
+            ],
+            "tsConfig": "tsconfig.app.mobile.json",
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "public"
+              }
+            ],
+            "styles": [
+              "src-mobile/styles.css"
+            ],
+            "scripts": [],
+            "outputMode": "static"
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kB",
+                  "maximumError": "1MB"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "4kB",
+                  "maximumError": "8kB"
+                }
+              ],
+              "outputHashing": "all"
+            },
+            "development": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "configurations": {
+            "production": {
+              "buildTarget": "tododolix-mobile:build:production"
+            },
+            "development": {
+              "buildTarget": "tododolix-mobile:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ],
+            "tsConfig": "tsconfig.spec.mobile.json",
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "public"
+              }
+            ],
+            "styles": [
+              "src-mobile/styles.css"
             ],
             "scripts": []
           }

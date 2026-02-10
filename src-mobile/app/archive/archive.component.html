@@ -1,0 +1,42 @@
+<section class="archive-page">
+  <div class="archive-head">
+    <div>
+      <p class="text-xs uppercase tracking-[0.28em] text-muted">{{ settings.t('nav_archive') }}</p>
+      <h2 class="text-3xl font-semibold">{{ settings.t('archive_title') }}</h2>
+      <p class="text-sm text-muted mt-1">{{ settings.t('archive_sub') }}</p>
+    </div>
+    <button (click)="clearArchive()" class="btn btn-danger">{{ settings.t('clear') }}</button>
+  </div>
+
+  <div *ngIf="archivedTodos.length === 0" class="panel-soft shadow-soft empty-state">
+    <h3 class="text-xl font-semibold">{{ settings.t('archive_empty') }}</h3>
+    <p class="text-sm text-muted">{{ settings.t('archive_empty_sub') }}</p>
+  </div>
+
+  <div class="archive-list">
+    <article *ngFor="let todo of archivedTodos" class="todo-card archive-card" [ngClass]="todoService.getColorClass(todo.color)">
+      <div>
+        <div class="text-xs uppercase tracking-[0.2em] font-semibold">{{ getWeekday(todo.date) }}</div>
+        <div class="text-base mt-1">{{ todo.description }}</div>
+        <div class="text-sm font-semibold text-muted mt-1">{{ getTimeLabel(todo) }}</div>
+      </div>
+
+      <div class="archive-meta">
+        <button (click)="restoreTodo(todo)" class="btn btn-ghost text-xs">{{ settings.t('restore') }}</button>
+        <span [ngClass]="{
+          'status-done': todo.status === 'done',
+          'status-archived': todo.status === 'open' || todo.status === 'in-progress'
+        }" class="status-pill">
+          {{ todo.status === 'done' ? settings.t('done') : settings.t('deleted') }}
+        </span>
+        <svg class="priority-icon" [ngClass]="{
+          'priority-low': todo.priority === 'low',
+          'priority-medium': todo.priority === 'medium',
+          'priority-high': todo.priority === 'high'
+        }" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" [attr.d]="todo.priority === 'high' ? 'M12 18V6M7 11l5-5 5 5' : (todo.priority === 'medium' ? 'M5 12h14' : 'M12 6v12M7 13l5 5 5-5')"/>
+        </svg>
+      </div>
+    </article>
+  </div>
+</section>

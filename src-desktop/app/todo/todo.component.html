@@ -1,0 +1,286 @@
+<div
+  *ngIf="formMounted"
+  class="fixed inset-0 z-50 flex items-center justify-center p-4 form-overlay"
+  [class.form-overlay-active]="formActive"
+>
+  <div class="panel mobile-sheet desktop-sheet shadow-lift w-full max-w-3xl p-5" [class.mobile-sheet-active]="formActive">
+    <div class="flex items-center justify-between mb-4">
+      <div>
+        <p class="text-xs uppercase tracking-[0.22em] text-muted">{{ settings.t('task_editor') }}</p>
+        <h3 class="text-2xl font-semibold">{{ isEditMode ? settings.t('edit_task') : settings.t('new_task') }}</h3>
+      </div>
+      <button type="button" (click)="cancelForm()" class="icon-btn" aria-label="Close form">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 6l12 12M18 6l-12 12"/>
+        </svg>
+      </button>
+    </div>
+
+    <form #todoForm="ngForm" (ngSubmit)="saveTodo()" class="space-y-3">
+      <div class="panel-soft quick-row rounded-xl p-3">
+        <label class="text-sm font-medium">{{ settings.t('quick_input') }}</label>
+        <div class="quick-inline">
+          <input
+            type="text"
+            name="quickInput"
+            [placeholder]="settings.t('quick_placeholder')"
+            [(ngModel)]="quickInput"
+            class="input"
+          />
+          <button type="button" class="btn btn-ghost" (click)="applyQuickInput()">{{ settings.t('parse_fill') }}</button>
+        </div>
+      </div>
+
+      <div class="panel-soft quick-row rounded-xl p-3">
+        <label class="text-sm font-medium">{{ settings.t('smart_presets') }}</label>
+        <div class="chip-grid">
+          <button type="button" class="chip-btn" (click)="applyQuickPreset('now')">{{ settings.t('preset_now') }}</button>
+          <button type="button" class="chip-btn" (click)="applyQuickPreset('today_pm')">{{ settings.t('preset_today_pm') }}</button>
+          <button type="button" class="chip-btn" (click)="applyQuickPreset('tomorrow_am')">{{ settings.t('preset_tomorrow_am') }}</button>
+          <button type="button" class="chip-btn" (click)="applyQuickPreset('tomorrow_evening')">{{ settings.t('preset_tomorrow_evening') }}</button>
+        </div>
+      </div>
+
+      <input
+        type="text"
+        name="description"
+        [placeholder]="settings.t('description')"
+        required
+        [(ngModel)]="formTodo.description"
+        class="input"
+      />
+
+      <div class="grid grid-cols-2 gap-2">
+        <input type="date" name="date" required [(ngModel)]="formTodo.date" class="input" />
+        <input type="time" name="time" required [(ngModel)]="formTodo.time" class="input" />
+      </div>
+
+      <div class="panel-soft p-3 rounded-xl">
+        <div class="flex items-center justify-between mb-2">
+          <label class="text-sm font-medium">{{ settings.t('quick_duration') }}</label>
+          <div class="flex items-center gap-2">
+            <button type="button" class="chip-btn chip-small" (click)="setDuration(30)">{{ settings.t('duration_30') }}</button>
+            <button type="button" class="chip-btn chip-small" (click)="setDuration(60)">{{ settings.t('duration_60') }}</button>
+            <button type="button" class="chip-btn chip-small" (click)="setDuration(90)">{{ settings.t('duration_90') }}</button>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between">
+          <label class="text-sm font-medium">{{ settings.t('time_range') }}</label>
+          <button
+            type="button"
+            class="theme-toggle"
+            [class.theme-toggle-dark]="useTimeRange"
+            (click)="useTimeRange = !useTimeRange"
+            aria-label="Toggle time range"
+          >
+            <span></span>
+          </button>
+        </div>
+
+        <input
+          *ngIf="useTimeRange"
+          type="time"
+          name="endTime"
+          required
+          [(ngModel)]="formTodo.endTime"
+          class="input mt-3"
+        />
+      </div>
+
+      <div class="panel-soft p-3 rounded-xl space-y-3">
+        <div class="flex justify-between items-center">
+          <label class="text-sm font-medium">{{ settings.t('color') }}</label>
+          <div class="flex gap-2">
+            <button
+              type="button"
+              class="color-pick bg-yellow-200"
+              [ngClass]="formTodo.color === 'yellow' ? 'color-pick-active border-yellow-600' : 'border-transparent'"
+              (click)="formTodo.color = 'yellow'"
+              aria-label="Yellow"
+            ></button>
+            <button
+              type="button"
+              class="color-pick bg-green-200"
+              [ngClass]="formTodo.color === 'green' ? 'color-pick-active border-green-600' : 'border-transparent'"
+              (click)="formTodo.color = 'green'"
+              aria-label="Green"
+            ></button>
+            <button
+              type="button"
+              class="color-pick bg-blue-200"
+              [ngClass]="formTodo.color === 'blue' ? 'color-pick-active border-blue-600' : 'border-transparent'"
+              (click)="formTodo.color = 'blue'"
+              aria-label="Blue"
+            ></button>
+          </div>
+        </div>
+
+        <div class="flex justify-between items-center">
+          <label class="text-sm font-medium">{{ settings.t('priority') }}</label>
+          <div class="flex gap-2">
+            <button
+              type="button"
+              class="icon-btn w-9 h-9"
+              [ngClass]="formTodo.priority === 'low' ? 'ring-2 ring-[color:var(--accent)]' : ''"
+              (click)="formTodo.priority = 'low'"
+              aria-label="Low priority"
+            >
+              <svg class="priority-icon priority-low" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12M7 13l5 5 5-5"/>
+              </svg>
+            </button>
+            <button
+              type="button"
+              class="icon-btn w-9 h-9"
+              [ngClass]="formTodo.priority === 'medium' ? 'ring-2 ring-[color:var(--accent)]' : ''"
+              (click)="formTodo.priority = 'medium'"
+              aria-label="Medium priority"
+            >
+              <svg class="priority-icon priority-medium" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14"/>
+              </svg>
+            </button>
+            <button
+              type="button"
+              class="icon-btn w-9 h-9"
+              [ngClass]="formTodo.priority === 'high' ? 'ring-2 ring-[color:var(--accent)]' : ''"
+              (click)="formTodo.priority = 'high'"
+              aria-label="High priority"
+            >
+              <svg class="priority-icon priority-high" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 18V6M7 11l5-5 5 5"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex justify-end gap-2 pt-2">
+        <button *ngIf="isEditMode" type="button" (click)="duplicateFromEdit()" class="btn btn-ghost text-sm">{{ settings.t('duplicate') }}</button>
+        <button type="button" (click)="cancelForm()" class="btn btn-ghost text-sm">{{ settings.t('cancel') }}</button>
+        <button type="submit" [disabled]="!todoForm.form.valid" class="btn btn-primary">
+          {{ isEditMode ? settings.t('save') : settings.t('create') }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div *ngIf="!showForm && isStartPage" class="todo-mobile-page">
+  <section class="filter-wrap">
+    <div class="desktop-filter-toolbar">
+      <button type="button" class="icon-btn filter-toggle-icon" (click)="toggleFilters()" [attr.aria-expanded]="filtersOpen" aria-label="Toggle filters">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 5h18M6 12h12M10 19h4"/>
+        </svg>
+      </button>
+    </div>
+
+    <div *ngIf="filtersMounted" class="panel-soft shadow-soft filter-panel filter-panel-collapse" [class.filter-panel-open]="filtersActive">
+      <div class="filter-grid">
+        <label class="filter-field">
+          <span class="text-xs uppercase tracking-[0.16em] text-muted">{{ settings.t('filter_when') }}</span>
+          <select [(ngModel)]="timeFilter" class="input filter-select">
+            <option value="all">{{ settings.t('filter_all') }}</option>
+            <option value="today">{{ settings.t('filter_today') }}</option>
+            <option value="morning">{{ settings.t('filter_morning') }}</option>
+            <option value="afternoon">{{ settings.t('filter_afternoon') }}</option>
+            <option value="week">{{ settings.t('filter_week') }}</option>
+          </select>
+        </label>
+
+        <label class="filter-field">
+          <span class="text-xs uppercase tracking-[0.16em] text-muted">{{ settings.t('filter_priority') }}</span>
+          <select [(ngModel)]="priorityFilter" class="input filter-select">
+            <option value="all">{{ settings.t('filter_all') }}</option>
+            <option value="high">{{ settings.t('priority_high') }}</option>
+            <option value="medium">{{ settings.t('priority_medium') }}</option>
+            <option value="low">{{ settings.t('priority_low') }}</option>
+          </select>
+        </label>
+      </div>
+    </div>
+  </section>
+
+  <section *ngIf="getActiveTodos().length === 0" class="panel-soft shadow-soft empty-state">
+    <h3 class="text-xl font-semibold">{{ settings.t('no_active_tasks') }}</h3>
+    <p class="text-sm text-muted">{{ settings.t('no_active_tasks_sub') }}</p>
+    <button (click)="openCreateForm()" class="btn btn-primary">{{ settings.t('create_now') }}</button>
+  </section>
+
+  <div class="todo-mobile-list desktop-task-grid">
+    <article
+      *ngFor="let todo of getActiveTodos()"
+      class="todo-card todo-mobile-card"
+      [ngClass]="todoService.getColorClass(todo.color)"
+      draggable="true"
+      (dragstart)="onDragStart(todo, $event)"
+      (dragover)="onDragOver($event)"
+      (drop)="onDrop(todo, $event)"
+      (dragend)="onDragEnd()"
+    >
+      <div class="todo-mobile-top">
+        <div>
+          <div class="todo-day-badge">{{ getWeekday(todo.date) }}</div>
+          <p class="todo-time text-sm font-semibold text-muted mt-2">{{ getTimeLabel(todo) }}</p>
+        </div>
+        <svg class="priority-icon" [ngClass]="{
+          'priority-low': todo.priority === 'low',
+          'priority-medium': todo.priority === 'medium',
+          'priority-high': todo.priority === 'high'
+        }" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path *ngIf="todo.priority === 'low'" stroke-linecap="round" stroke-linejoin="round" d="M12 6v12M7 13l5 5 5-5"/>
+          <path *ngIf="todo.priority === 'medium'" stroke-linecap="round" stroke-linejoin="round" d="M5 12h14"/>
+          <path *ngIf="todo.priority === 'high'" stroke-linecap="round" stroke-linejoin="round" d="M12 18V6M7 11l5-5 5 5"/>
+        </svg>
+      </div>
+
+      <p class="todo-mobile-text">{{ todo.description }}</p>
+
+      <div class="todo-mobile-bottom">
+        <button
+          (click)="cycleStatus(todo)"
+          class="status-pill"
+          [ngClass]="{
+            'status-open': todo.status === 'open',
+            'status-progress': todo.status === 'in-progress',
+            'status-done': todo.status === 'done'
+          }"
+        >
+          {{ statusLabel(todo.status) }}
+        </button>
+
+        <div class="flex items-center gap-2">
+          <button (click)="editTodo(todo)" class="icon-btn w-8 h-8" draggable="false" aria-label="Edit">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 20h9"/>
+              <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4 12.5-12.5z"/>
+            </svg>
+          </button>
+          <button (click)="confirmDelete(todo)" class="icon-btn w-8 h-8" draggable="false" aria-label="Delete">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 6h18"/>
+              <path stroke-linecap="round" stroke-linejoin="round" d="M8 6V4h8v2"/>
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 6l1 14h10l1-14"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </article>
+  </div>
+</div>
+
+<div
+  *ngIf="deleteMounted && isStartPage"
+  class="fixed inset-0 z-50 flex items-center justify-center p-4 form-overlay"
+  [class.form-overlay-active]="deleteActive"
+>
+  <div class="panel p-5 rounded-2xl shadow-lift w-full max-w-xs confirm-dialog" [class.confirm-dialog-active]="deleteActive">
+    <p class="mb-4 text-center text-sm">{{ settings.t('delete_confirm') }}</p>
+    <div class="flex justify-between">
+      <button (click)="cancelDelete()" class="btn btn-ghost text-xs">{{ settings.t('cancel') }}</button>
+      <button (click)="archiveTodo(todoToDelete!)" class="btn btn-danger text-xs">{{ settings.t('yes') }}</button>
+    </div>
+  </div>
+</div>

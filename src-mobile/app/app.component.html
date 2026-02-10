@@ -1,0 +1,37 @@
+<div class="mobile-shell">
+  <header class="mobile-topbar panel shadow-soft">
+    <div class="topbar-brand">
+      <div class="drawer-brand-mark">
+        <img src="favicon.ico" alt="Tododolix" class="w-6 h-6" />
+      </div>
+      <div class="mobile-topbar-brand">
+        <div class="mobile-topbar-title">Tododolix</div>
+        <div class="mobile-topbar-sub text-muted">{{ taskCount }} {{ settings.t('app_subtitle') }}</div>
+      </div>
+    </div>
+
+    <div class="mobile-topbar-actions">
+      <button (click)="toggleThemeQuick()" class="icon-btn" aria-label="Toggle theme">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M21 12.79A9 9 0 1111.21 3c0 .3-.01.6-.01.9A7.1 7.1 0 0018.1 11c.3 0 .6 0 .9-.01z"/>
+        </svg>
+      </button>
+      <button (click)="triggerQuickCreate()" class="btn btn-primary mobile-quick-btn">
+        {{ settings.t('btn_new') }}
+      </button>
+    </div>
+  </header>
+
+  <main class="mobile-main">
+    <nav class="mobile-tabbar panel-soft shadow-soft">
+      <a routerLink="/" routerLinkActive="tab-active" [routerLinkActiveOptions]="{ exact: true }" class="tab-link">{{ settings.t('nav_tasks') }}</a>
+      <a routerLink="/archive" routerLinkActive="tab-active" class="tab-link">{{ settings.t('nav_archive') }}</a>
+      <a routerLink="/config" routerLinkActive="tab-active" class="tab-link">{{ settings.t('nav_config') }}</a>
+    </nav>
+
+    <section class="mobile-content">
+      <router-outlet></router-outlet>
+      <app-todo *ngIf="isNotStartPage"></app-todo>
+    </section>
+  </main>
+</div>
