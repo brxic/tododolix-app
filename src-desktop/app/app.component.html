@@ -27,7 +27,7 @@
       </div>
     </header>
 
-    <section class="desktop-content">
+    <section class="desktop-content" (click)="closeMenuOnEmptyContentClick($event)">
       <router-outlet></router-outlet>
       <app-todo *ngIf="isNotStartPage"></app-todo>
     </section>

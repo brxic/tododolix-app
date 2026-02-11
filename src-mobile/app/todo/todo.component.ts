@@ -191,6 +191,12 @@ export class TodoComponent implements OnInit, OnDestroy {
       working = working.replace(/\b(tomorrow|morgen)\b/gi, ' ');
     }
 
+    const weekdayMatch = this.parseNextWeekday(working);
+    if (weekdayMatch) {
+      this.formTodo.date = this.isoDate(weekdayMatch.offsetDays);
+      working = working.replace(weekdayMatch.matched, ' ');
+    }
+
     if (working.includes('!!')) {
       this.formTodo.priority = 'high';
     } else if (working.includes('!')) {
@@ -390,6 +396,40 @@ export class TodoComponent implements OnInit, OnDestroy {
       return time;
     }
     return `${String(hh).padStart(2, '0')}:${String(mm).padStart(2, '0')}`;
+  }
+
+  private parseNextWeekday(input: string): { offsetDays: number; matched: string } | null {
+    const weekdayPatterns: Array<{ regex: RegExp; day: number }> = [
+      { regex: /\b(monday|montag|mon|mo)\b/i, day: 1 },
+      { regex: /\b(tuesday|dienstag|tue|tues|di)\b/i, day: 2 },
+      { regex: /\b(wednesday|mittwoch|wed|mi)\b/i, day: 3 },
+      { regex: /\b(thursday|donnerstag|thu|thur|thurs|do)\b/i, day: 4 },
+      { regex: /\b(friday|freitag|fri|fr)\b/i, day: 5 },
+      { regex: /\b(saturday|samstag|sat|sa)\b/i, day: 6 },
+      { regex: /\b(sunday|sonntag|sun|so)\b/i, day: 0 }
+    ];
+
+    for (const entry of weekdayPatterns) {
+      const match = input.match(entry.regex);
+      if (!match?.[0]) {
+        continue;
+      }
+      return {
+        offsetDays: this.nextWeekdayOffset(entry.day),
+        matched: match[0]
+      };
+    }
+
+    return null;
+  }
+
+  private nextWeekdayOffset(targetDay: number): number {
+    const currentDay = new Date().getDay();
+    let offset = (targetDay - currentDay + 7) % 7;
+    if (offset === 0) {
+      offset = 7;
+    }
+    return offset;
   }
 
   private matchesFilters(todo: Todo): boolean {

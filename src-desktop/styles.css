@@ -18,6 +18,8 @@
     --card-blue: #e6edf7;
     --shadow-soft: 0 12px 30px rgba(18, 24, 24, 0.08);
     --shadow-lift: 0 20px 45px rgba(18, 24, 24, 0.14);
+    --motion-smooth: cubic-bezier(0.22, 1, 0.36, 1);
+    --motion-soft: cubic-bezier(0.25, 0.9, 0.32, 1);
     color-scheme: light;
   }
 
@@ -171,7 +173,7 @@
 
   .mobile-content {
     padding-bottom: 2rem;
-    animation: fade-in 220ms ease;
+    animation: fade-in 300ms var(--motion-soft);
   }
 
   .drawer-brand-mark {
@@ -222,7 +224,7 @@
     border-radius: 18px;
     display: grid;
     gap: 0.75rem;
-    animation: rise-in 280ms cubic-bezier(0.2, 0.9, 0.2, 1);
+    animation: rise-in 420ms var(--motion-soft);
     transform-origin: center bottom;
   }
 
@@ -271,7 +273,7 @@
   .form-overlay {
     background-color: rgba(0, 0, 0, 0);
     backdrop-filter: blur(0);
-    transition: background-color 220ms ease, backdrop-filter 220ms ease;
+    transition: background-color 300ms var(--motion-smooth), backdrop-filter 300ms var(--motion-smooth);
   }
 
   .form-overlay-active {
@@ -285,7 +287,7 @@
     overflow: auto;
     transform: translateY(16px) scale(0.985);
     opacity: 0;
-    transition: transform 240ms cubic-bezier(0.2, 0.9, 0.2, 1), opacity 200ms ease;
+    transition: transform 360ms var(--motion-smooth), opacity 280ms var(--motion-soft);
     will-change: transform, opacity;
   }
 
@@ -297,7 +299,7 @@
   .confirm-dialog {
     transform: translateY(10px) scale(0.96);
     opacity: 0;
-    transition: transform 220ms cubic-bezier(0.2, 0.9, 0.2, 1), opacity 180ms ease;
+    transition: transform 320ms var(--motion-smooth), opacity 240ms var(--motion-soft);
   }
 
   .confirm-dialog-active {
@@ -322,7 +324,7 @@
     opacity: 0;
     overflow: hidden;
     transform: translateY(-6px);
-    transition: max-height 220ms ease, opacity 180ms ease, transform 200ms ease;
+    transition: max-height 320ms var(--motion-soft), opacity 260ms var(--motion-soft), transform 300ms var(--motion-smooth);
   }
 
   .filter-panel-open {
@@ -408,7 +410,7 @@
     height: 1.7rem;
     border-radius: 999px;
     border: 2px solid transparent;
-    transition: transform 160ms ease;
+    transition: transform 220ms var(--motion-soft), background-color 220ms var(--motion-soft), border-color 220ms var(--motion-soft);
   }
 
   .color-pick-active {
@@ -491,7 +493,7 @@
     max-height: 0;
     opacity: 0;
     transform: translateY(-4px);
-    transition: max-height 280ms ease, opacity 200ms ease, transform 220ms ease;
+    transition: max-height 360ms var(--motion-soft), opacity 280ms var(--motion-soft), transform 320ms var(--motion-smooth);
   }
 
   .help-open {
@@ -549,7 +551,7 @@
     border: 1px solid transparent;
     font-weight: 700;
     font-size: 0.9rem;
-    transition: transform 180ms ease, box-shadow 180ms ease, background-color 180ms ease, color 180ms ease, border-color 180ms ease;
+    transition: transform 240ms var(--motion-soft), box-shadow 260ms var(--motion-soft), background-color 220ms var(--motion-soft), color 220ms var(--motion-soft), border-color 220ms var(--motion-soft);
   }
 
   .btn-primary {
@@ -596,7 +598,7 @@
     border-radius: 999px;
     border: 1px solid var(--border);
     background-color: var(--surface);
-    transition: transform 160ms ease, background-color 160ms ease, border-color 160ms ease;
+    transition: transform 220ms var(--motion-soft), background-color 220ms var(--motion-soft), border-color 220ms var(--motion-soft), box-shadow 220ms var(--motion-soft);
   }
 
   .icon-btn:hover {
@@ -612,7 +614,7 @@
     background-color: var(--surface);
     color: var(--text);
     font-size: 0.94rem;
-    transition: border-color 150ms ease, box-shadow 150ms ease;
+    transition: border-color 210ms var(--motion-soft), box-shadow 210ms var(--motion-soft), background-color 210ms var(--motion-soft);
   }
 
   .input:focus {
@@ -625,7 +627,7 @@
     border-radius: 18px;
     border: 1px solid var(--border);
     box-shadow: var(--shadow-soft);
-    transition: transform 200ms ease, box-shadow 200ms ease;
+    transition: transform 280ms var(--motion-soft), box-shadow 300ms var(--motion-soft), border-color 220ms var(--motion-soft);
   }
 
   .todo-card:hover {
@@ -680,7 +682,7 @@
     border: 1px solid var(--border);
     background-color: var(--surface);
     position: relative;
-    transition: background-color 180ms ease, border-color 180ms ease;
+    transition: background-color 240ms var(--motion-soft), border-color 240ms var(--motion-soft);
   }
 
   .theme-toggle span {
@@ -691,7 +693,7 @@
     height: 22px;
     border-radius: 999px;
     background-color: var(--accent);
-    transition: transform 180ms ease, background-color 180ms ease;
+    transition: transform 260ms var(--motion-smooth), background-color 240ms var(--motion-soft);
   }
 
   .theme-toggle-dark {
@@ -781,27 +783,25 @@
 /* Desktop-specific layout overrides */
 @layer components {
   .desktop-shell {
-    --desktop-header-h: 96px;
     min-height: 100vh;
-    width: min(100%, 1560px);
-    margin: 0 auto;
-    padding: 1rem;
+    width: 100%;
+    padding: 1rem 1.1rem;
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 280px;
-    gap: 1rem;
-    transition: grid-template-columns 240ms ease;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 300px);
+    gap: 0.95rem;
+    transition: grid-template-columns 340ms var(--motion-smooth);
   }
 
   .desktop-sidebar {
     position: sticky;
-    top: calc(var(--desktop-header-h) + 1.75rem);
-    height: calc(100vh - var(--desktop-header-h) - 2rem);
+    top: 1rem;
+    height: calc(100vh - 2rem);
     padding: 1rem;
     display: grid;
     grid-template-rows: auto auto 1fr auto;
     gap: 1rem;
     align-content: start;
-    transition: opacity 200ms ease, transform 220ms ease, padding 220ms ease, border-color 220ms ease;
+    transition: opacity 260ms var(--motion-soft), transform 340ms var(--motion-smooth), padding 320ms var(--motion-soft), border-color 260ms var(--motion-soft);
     overflow: hidden;
   }
 
@@ -855,18 +855,17 @@
 
   .desktop-main {
     min-width: 0;
+    min-height: calc(100vh - 2rem);
     display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
     gap: 1rem;
-    align-content: start;
-    padding-top: calc(var(--desktop-header-h) + 0.95rem);
   }
 
   .desktop-header {
-    position: fixed;
-    top: 0.7rem;
-    left: 1rem;
-    right: 1rem;
-    z-index: 70;
+    position: sticky;
+    top: 1rem;
+    z-index: 40;
+    width: 100%;
     padding: 1rem 1.2rem;
     display: flex;
     justify-content: space-between;
@@ -907,8 +906,11 @@
   }
 
   .desktop-content {
+    width: 100%;
     min-width: 0;
+    min-height: 0;
     display: grid;
+    align-content: start;
     gap: 0.9rem;
   }
 
@@ -935,7 +937,8 @@
   }
 
   .archive-list {
-    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+    width: 100%;
+    grid-template-columns: minmax(0, 1fr);
     gap: 0.85rem;
   }
 
@@ -944,7 +947,8 @@
   }
 
   .guide-page {
-    grid-template-columns: minmax(360px, 450px) minmax(0, 1fr);
+    width: 100%;
+    grid-template-columns: minmax(0, 1fr);
     align-items: start;
     gap: 1rem;
   }
@@ -953,6 +957,16 @@
   .guide-page > h2,
   .guide-page > p.text-sm {
     grid-column: 1 / -1;
+  }
+
+  .guide-card,
+  .archive-card,
+  .archive-head,
+  .todo-mobile-page,
+  .archive-page,
+  .filter-wrap,
+  .filter-panel {
+    width: 100%;
   }
 
   .guide-page > article:last-child {

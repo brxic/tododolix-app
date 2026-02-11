@@ -68,4 +68,13 @@ export class AppComponent {
   toggleMenu(): void {
     this.isMenuCollapsed = !this.isMenuCollapsed;
   }
+
+  closeMenuOnEmptyContentClick(event: MouseEvent): void {
+    if (this.isMenuCollapsed) {
+      return;
+    }
+    if (event.target === event.currentTarget) {
+      this.isMenuCollapsed = true;
+    }
+  }
 }
