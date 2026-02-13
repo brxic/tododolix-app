@@ -783,13 +783,15 @@
 /* Desktop-specific layout overrides */
 @layer components {
   .desktop-shell {
+    --sidebar-w: 300px;
+    --shell-gap: 0.95rem;
     min-height: 100vh;
     width: 100%;
     padding: 1rem 1.1rem;
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 300px);
-    gap: 0.95rem;
-    transition: grid-template-columns 340ms var(--motion-smooth);
+    grid-template-columns: minmax(0, 1fr) minmax(0, var(--sidebar-w));
+    gap: var(--shell-gap);
+    transition: grid-template-columns 340ms var(--motion-smooth), gap 340ms var(--motion-smooth);
   }
 
   .desktop-sidebar {
@@ -866,6 +868,7 @@
     top: 1rem;
     z-index: 40;
     width: 100%;
+    min-width: 0;
     padding: 1rem 1.2rem;
     display: flex;
     justify-content: space-between;
@@ -893,7 +896,8 @@
   }
 
   .menu-collapsed {
-    grid-template-columns: minmax(0, 1fr) 0;
+    --sidebar-w: 0px;
+    --shell-gap: 0rem;
   }
 
   .menu-collapsed .desktop-sidebar {
@@ -914,9 +918,14 @@
     gap: 0.9rem;
   }
 
+  .desktop-content > * {
+    width: 100%;
+    min-width: 0;
+  }
+
   .desktop-sheet {
     max-height: 90vh;
-    max-width: 980px;
+    max-width: none;
   }
 
   .todo-mobile-page {
@@ -924,6 +933,7 @@
   }
 
   .desktop-task-grid {
+    width: 100%;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 0.9rem;
   }
@@ -977,7 +987,12 @@
 @media (max-width: 1200px) {
   @layer components {
     .desktop-shell {
-      grid-template-columns: minmax(0, 1fr) 240px;
+      --sidebar-w: 240px;
+    }
+
+    .desktop-shell.menu-collapsed {
+      --sidebar-w: 0px;
+      --shell-gap: 0rem;
     }
 
     .desktop-task-grid {
@@ -989,7 +1004,12 @@
 @media (max-width: 980px) {
   @layer components {
     .desktop-shell {
-      grid-template-columns: minmax(0, 1fr) 220px;
+      --sidebar-w: 220px;
+    }
+
+    .desktop-shell.menu-collapsed {
+      --sidebar-w: 0px;
+      --shell-gap: 0rem;
     }
 
     .guide-page {
