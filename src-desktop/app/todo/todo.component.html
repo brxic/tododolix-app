@@ -89,6 +89,21 @@
       </div>
 
       <div class="panel-soft p-3 rounded-xl space-y-3">
+        <div class="status-editor status-editor-inline">
+          <label class="text-sm font-medium">{{ settings.t('status') }}</label>
+          <div class="chip-grid">
+            <button
+              *ngFor="let status of statusOptions"
+              type="button"
+              class="chip-btn"
+              [ngClass]="formTodo.status === status ? 'chip-btn-active' : ''"
+              (click)="formTodo.status = status"
+            >
+              {{ statusLabel(status) }}
+            </button>
+          </div>
+        </div>
+
         <div class="flex justify-between items-center">
           <label class="text-sm font-medium">{{ settings.t('color') }}</label>
           <div class="flex gap-2">
@@ -276,7 +291,7 @@
   class="fixed inset-0 z-50 flex items-center justify-center p-4 form-overlay"
   [class.form-overlay-active]="deleteActive"
 >
-  <div class="panel p-5 rounded-2xl shadow-lift w-full confirm-dialog" [class.confirm-dialog-active]="deleteActive">
+  <div class="panel p-5 rounded-2xl shadow-lift w-full max-w-sm confirm-dialog" [class.confirm-dialog-active]="deleteActive">
     <p class="mb-4 text-center text-sm">{{ settings.t('delete_confirm') }}</p>
     <div class="flex justify-between">
       <button (click)="cancelDelete()" class="btn btn-ghost text-xs">{{ settings.t('cancel') }}</button>

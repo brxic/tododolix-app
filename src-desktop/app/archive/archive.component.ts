@@ -45,9 +45,40 @@ export class ArchiveComponent implements OnInit {
       return '';
     }
     const start = this.settings.formatTime(todo.time);
+    const dateLabel = this.futureDateLabel(todo.date);
     if (todo.endTime && todo.endTime !== todo.time) {
-      return `${start} - ${this.settings.formatTime(todo.endTime)}`;
+      const range = `${start} - ${this.settings.formatTime(todo.endTime)}`;
+      return dateLabel ? `${dateLabel} · ${range}` : range;
     }
-    return start;
+    return dateLabel ? `${dateLabel} · ${start}` : start;
+  }
+
+  private futureDateLabel(dateStr: string): string {
+    const date = this.parseTodoDate(dateStr);
+    if (!date || !this.isMoreThanWeekAway(date)) {
+      return '';
+    }
+    return date.toLocaleDateString(this.settings.locale(), {
+      day: '2-digit',
+      month: '2-digit'
+    });
+  }
+
+  private parseTodoDate(dateStr: string): Date | null {
+    if (!dateStr) {
+      return null;
+    }
+    const value = new Date(`${dateStr}T00:00:00`);
+    if (Number.isNaN(value.getTime())) {
+      return null;
+    }
+    return value;
+  }
+
+  private isMoreThanWeekAway(date: Date): boolean {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const diffDays = (date.getTime() - today.getTime()) / (1000 * 60 * 60 * 24);
+    return diffDays > 7;
   }
 }

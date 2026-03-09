@@ -89,6 +89,21 @@
       </div>
 
       <div class="panel-soft p-3 rounded-xl space-y-3">
+        <div class="status-editor status-editor-inline">
+          <label class="text-sm font-medium">{{ settings.t('status') }}</label>
+          <div class="chip-grid">
+            <button
+              *ngFor="let status of statusOptions"
+              type="button"
+              class="chip-btn"
+              [ngClass]="formTodo.status === status ? 'chip-btn-active' : ''"
+              (click)="formTodo.status = status"
+            >
+              {{ statusLabel(status) }}
+            </button>
+          </div>
+        </div>
+
         <div class="flex justify-between items-center">
           <label class="text-sm font-medium">{{ settings.t('color') }}</label>
           <div class="flex gap-2">
