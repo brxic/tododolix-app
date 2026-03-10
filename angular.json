@@ -22,6 +22,10 @@
             "tsConfig": "tsconfig.app.desktop.json",
             "assets": [
               {
+                "glob": "manifest.webmanifest",
+                "input": "public-desktop"
+              },
+              {
                 "glob": "**/*",
                 "input": "public"
               }
@@ -30,7 +34,8 @@
               "src-desktop/styles.css"
             ],
             "scripts": [],
-            "outputMode": "static"
+            "outputMode": "static",
+            "serviceWorker": "ngsw-config.desktop.json"
           },
           "configurations": {
             "production": {
@@ -46,7 +51,10 @@
                   "maximumError": "8kB"
                 }
               ],
-              "outputHashing": "all"
+              "outputHashing": "all",
+              "optimization": {
+                "fonts": false
+              }
             },
             "development": {
               "optimization": false,
@@ -112,6 +120,10 @@
             "tsConfig": "tsconfig.app.mobile.json",
             "assets": [
               {
+                "glob": "manifest.webmanifest",
+                "input": "public-mobile"
+              },
+              {
                 "glob": "**/*",
                 "input": "public"
               }
@@ -120,7 +132,8 @@
               "src-mobile/styles.css"
             ],
             "scripts": [],
-            "outputMode": "static"
+            "outputMode": "static",
+            "serviceWorker": "ngsw-config.mobile.json"
           },
           "configurations": {
             "production": {
@@ -136,7 +149,10 @@
                   "maximumError": "8kB"
                 }
               ],
-              "outputHashing": "all"
+              "outputHashing": "all",
+              "optimization": {
+                "fonts": false
+              }
             },
             "development": {
               "optimization": false,

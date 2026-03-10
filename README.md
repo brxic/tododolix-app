@@ -17,16 +17,18 @@ The project is built around three principles:
 
 - `src-desktop/` Desktop Angular app source
 - `src-mobile/` Mobile Angular app source
+- `site/` Landing page + `/app` auto device redirect
 - `electron/` Electron shell (desktop runtime + packaging)
-- `capacitor.config.ts` Capacitor config (mobile runtime bridge)
 - `public/` shared static assets
+- `public-mobile/manifest.webmanifest` Mobile PWA manifest
+- `public-desktop/manifest.webmanifest` Desktop PWA manifest
 
 ## Tech Stack
 
 - Angular
 - Tailwind CSS
+- Angular Service Worker (PWA)
 - Electron (desktop app packaging)
-- Capacitor (mobile app packaging / Android bridge)
 - Local persistence with `localStorage`
 
 ## Current Core Features
@@ -56,11 +58,6 @@ The project is built around three principles:
 
 - Node.js (current LTS recommended)
 - npm
-
-For Android builds:
-- Android Studio
-- Android SDK + platform tools
-- JDK 17+
 
 ## Install
 
@@ -102,51 +99,37 @@ Windows target only:
 npm run electron:win
 ```
 
-## Mobile Workflows (Android via Capacitor)
-
-### First-time setup
-
-1. Build mobile web assets:
-
-```bash
-npm run mobile:build
-```
-
-2. Add Android platform once:
-
-```bash
-npm run mobile:android:add
-```
-
-### Daily development flow
-
-1. Rebuild and sync web assets into Android project:
-
-```bash
-npm run mobile:android:sync
-```
-
-2. Open Android Studio project:
-
-```bash
-npm run mobile:android:open
-```
-
-3. Run from Android Studio on emulator/device.
-
-Optional CLI run (if Android toolchain/device is configured):
-
-```bash
-npm run mobile:android:run
-```
-
-### Mobile web-only preview
+## Mobile Web Workflows
 
 ```bash
 npm run start:mobile
 ```
 
 Open: `http://localhost:4200`
+
+## Production Web/PWA Deploy
+
+Create a deploy-ready folder with landing page + auto device routing + both app builds:
+
+```bash
+npm run build:web
+```
+
+Result:
+
+- `dist/web/index.html` -> landing page
+- `dist/web/app/index.html` -> auto route to mobile/desktop
+- `dist/web/app/mobile/` -> mobile app (PWA)
+- `dist/web/app/desktop/` -> desktop app (PWA)
+- `dist/web/_redirects` -> SPA fallback rules for Netlify-style hosts
+
+Local preview without `npx`:
+
+```bash
+npm run preview:web
+```
+
+Open: `http://localhost:8080`
 
 ## All Relevant Commands
 
@@ -160,16 +143,19 @@ npm run electron:dist
 npm run start:mobile
 npm run mobile:build
 npm run test:mobile
-npm run mobile:android:add
-npm run mobile:android:sync
-npm run mobile:android:open
-npm run mobile:android:run
+
+npm run build:web:desktop
+npm run build:web:mobile
+npm run assemble:web
+npm run build:web
+npm run preview:web
 ```
 
 ## Build Output Paths
 
 - Desktop web output: `dist/tododolix-basil`
-- Mobile web output: `dist/tododolix-mobile/browser`
+- Mobile web output: `dist/tododolix-mobile`
+- Combined deploy bundle: `dist/web`
 
 ## Data Storage
 
@@ -180,5 +166,5 @@ Data is local by default:
 ## Notes
 
 - Electron is the desktop runtime.
-- Capacitor is the mobile runtime bridge.
-- If this environment cannot access your npm registry, run `npm install` in a network-enabled environment before using Capacitor commands.
+- Mobile is delivered as web/PWA surface.
+- Desktop can be delivered as web/PWA and additionally as Electron `.exe`.
