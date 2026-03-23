@@ -1,7 +1,14 @@
 const fs = require('fs');
 const path = require('path');
-const Jimp = require('jimp');
+const jimpModule = require('jimp');
 const pngToIco = require('png-to-ico');
+
+const Jimp = jimpModule.Jimp || jimpModule.default || jimpModule;
+const readImage =
+  typeof jimpModule.read === 'function'
+    ? jimpModule.read.bind(jimpModule)
+    : Jimp.read.bind(Jimp);
+const mimePng = jimpModule.MIME_PNG || Jimp.MIME_PNG;
 
 const sourcePng = path.join(__dirname, '..', 'public', 'Logo.png');
 const outDir = path.join(__dirname, '..', 'build');
@@ -12,13 +19,13 @@ async function main() {
     throw new Error(`Missing source PNG: ${sourcePng}`);
   }
 
-  const image = await Jimp.read(sourcePng);
+  const image = await readImage(sourcePng);
   const sizes = [16, 24, 32, 48, 64, 128, 256];
 
   const buffers = await Promise.all(
     sizes.map(async (size) => {
       const resized = image.clone().contain(size, size);
-      return resized.getBufferAsync(Jimp.MIME_PNG);
+      return resized.getBufferAsync(mimePng);
     })
   );
 

@@ -35,7 +35,8 @@
             ],
             "scripts": [],
             "outputMode": "static",
-            "serviceWorker": "ngsw-config.desktop.json"
+            "serviceWorker": true,
+            "ngswConfigPath": "ngsw-config.desktop.json"
           },
           "configurations": {
             "production": {
@@ -133,7 +134,8 @@
             ],
             "scripts": [],
             "outputMode": "static",
-            "serviceWorker": "ngsw-config.mobile.json"
+            "serviceWorker": true,
+            "ngswConfigPath": "ngsw-config.mobile.json"
           },
           "configurations": {
             "production": {
