@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tododolix | Tool wird geöffnet</title>
+  <meta name="description" content="Tododolix öffnet automatisch die passende App-Version für dein Gerät." />
+  <link rel="icon" href="../favicon.ico" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Sora:wght@600;700;800&display=swap"
+    rel="stylesheet"
+  />
+  <style>
+    :root {
+      --bg: #f3f1ed;
+      --surface: rgba(255, 255, 255, 0.78);
+      --border: rgba(30, 35, 35, 0.1);
+      --text: #1e2323;
+      --text-muted: #69716f;
+      --accent: #c84a4a;
+      --accent-alt: #3e8c88;
+      --accent-contrast: #fff7f5;
+      color-scheme: light;
+    }
+
+    .dark {
+      --bg: #091010;
+      --surface: rgba(20, 28, 28, 0.78);
+      --border: rgba(255, 255, 255, 0.1);
+      --text: #edf3f3;
+      --text-muted: #9aa7a5;
+      --accent: #ec6f6f;
+      --accent-alt: #6fd4ce;
+      --accent-contrast: #170909;
+      color-scheme: dark;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      font-family: "Manrope", ui-sans-serif, system-ui, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(111, 212, 206, 0.18), transparent 30%),
+        radial-gradient(circle at top right, rgba(236, 111, 111, 0.16), transparent 28%),
+        var(--bg);
+    }
+
+    .panel {
+      width: min(720px, 100%);
+      padding: 28px;
+      border-radius: 28px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(14px);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.12);
+    }
+
+    .eyebrow {
+      margin: 0 0 12px;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.24em;
+      color: var(--text-muted);
+      font-weight: 800;
+    }
+
+    h1 {
+      margin: 0;
+      font-family: "Sora", "Manrope", ui-sans-serif, system-ui, sans-serif;
+      font-size: clamp(2.2rem, 5vw, 3.6rem);
+      line-height: 0.98;
+    }
+
+    p {
+      line-height: 1.7;
+      color: var(--text-muted);
+    }
+
+    .status {
+      margin-top: 18px;
+      padding: 16px 18px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text);
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+  <section class="panel">
+    <p class="eyebrow">Smart App Routing</p>
+    <h1>Das Tool wird geöffnet.</h1>
+    <p>Tododolix leitet dich automatisch in die passende Version weiter.</p>
+    <div id="status" class="status">Gerät wird analysiert ...</div>
+  </section>
+
+  <script>
+    const DEVICE_QUERY_KEY = "device";
+    const DEBUG_QUERY_KEY = "debug-device";
+    const theme = localStorage.getItem("tododolix-theme");
+
+    if (theme === "dark" || (!theme && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+      document.documentElement.classList.add("dark");
+    }
+
+    const statusEl = document.getElementById("status");
+
+    function detectTarget() {
+      const url = new URL(window.location.href);
+      const forcedDevice = url.searchParams.get(DEVICE_QUERY_KEY);
+      if (forcedDevice === "mobile") {
+        return { target: "./mobile/?source=forced", reason: "Erzwungen: Mobile-Version wird geöffnet ..." };
+      }
+      if (forcedDevice === "desktop") {
+        return { target: "./desktop/?source=forced", reason: "Erzwungen: Desktop-Version wird geöffnet ..." };
+      }
+
+      const ua = navigator.userAgent || "";
+      const uaMobile = /Android|iPhone|iPad|iPod|Mobile|Opera Mini|IEMobile/i.test(ua);
+      const uaDataMobile = navigator.userAgentData && typeof navigator.userAgentData.mobile === "boolean"
+        ? navigator.userAgentData.mobile
+        : null;
+      const coarsePointer = window.matchMedia("(pointer: coarse)").matches;
+      const anyCoarsePointer = window.matchMedia("(any-pointer: coarse)").matches;
+      const noHover = window.matchMedia("(hover: none)").matches;
+      const narrowScreen = window.matchMedia("(max-width: 820px)").matches;
+      const shortScreen = window.matchMedia("(max-height: 950px)").matches;
+      const touchPoints = navigator.maxTouchPoints || 0;
+      const hasTouch = "ontouchstart" in window || touchPoints > 0;
+      const mobileViewport = narrowScreen && (coarsePointer || anyCoarsePointer || noHover || hasTouch);
+      const emulatedMobile = narrowScreen && shortScreen && (hasTouch || anyCoarsePointer || noHover);
+      const debugMode = url.searchParams.get(DEBUG_QUERY_KEY) === "1";
+
+      const mobileSignals = [
+        uaMobile,
+        uaDataMobile === true,
+        mobileViewport,
+        emulatedMobile,
+        touchPoints > 1 && narrowScreen
+      ].filter(Boolean).length;
+
+      if (debugMode) {
+        console.table({
+          uaMobile,
+          uaDataMobile,
+          coarsePointer,
+          anyCoarsePointer,
+          noHover,
+          narrowScreen,
+          shortScreen,
+          touchPoints,
+          hasTouch,
+          mobileViewport,
+          emulatedMobile,
+          mobileSignals
+        });
+      }
+
+      if (mobileSignals >= 1) {
+        return { target: "./mobile/", reason: "Mobile erkannt. Die mobile Version wird geöffnet ..." };
+      }
+
+      return { target: "./desktop/", reason: "Desktop erkannt. Die Desktop-Version wird geöffnet ..." };
+    }
+
+    function runDetection() {
+      const result = detectTarget();
+      statusEl.textContent = result.reason;
+      window.setTimeout(() => {
+        window.location.href = result.target;
+      }, 450);
+    }
+
+    runDetection();
+  </script>
+</body>
+</html>

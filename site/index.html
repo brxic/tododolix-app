@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tododolix | Fokus für Aufgaben auf Desktop und Mobile</title>
+  <meta
+    name="description"
+    content="Tododolix ist ein modernes Aufgaben-Tool für Desktop und Mobile. Plane, priorisiere und erledige Aufgaben in einer schnellen, lokalen Experience."
+  />
+  <link rel="icon" href="./favicon.ico" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Sora:wght@600;700;800&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div class="page-shell">
+    <div class="ambient ambient-left"></div>
+    <div class="ambient ambient-right"></div>
+
+    <header class="topbar glass">
+      <a class="brand" href="#top" aria-label="Tododolix Startseite" data-i18n-aria-label="brandAriaLabel">
+        <span class="brand-mark" aria-hidden="true">
+          <img src="./Logo.png" alt="" />
+        </span>
+        <span class="brand-copy">
+          <strong>Tododolix</strong>
+          <span data-i18n="brandTagline">Tasks in klaren Flows</span>
+        </span>
+      </a>
+
+      <nav id="topnav" class="topnav">
+        <a href="#produkt" data-i18n="navProduct">Produkt</a>
+        <a href="#features" data-i18n="navFeatures">Features</a>
+        <a href="#about" data-i18n="navAbout">About</a>
+      </nav>
+
+      <div class="topbar-actions">
+        <a id="open-tool-top" class="button button-primary topbar-tool-btn" href="./app/" data-i18n="openTool">Zum Tool</a>
+        <button id="menu-toggle" class="menu-toggle" type="button" aria-label="Menü öffnen" aria-expanded="false" data-i18n-aria-label="menuAriaLabel">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </header>
+
+    <main id="top">
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow" data-i18n="heroEyebrow">Desktop Power. Mobile Speed. Ein Produkt.</p>
+          <div class="hero-logo-inline" aria-hidden="true">
+            <img src="./Logo.png" alt="" />
+          </div>
+          <h1 data-i18n="heroTitle">Ein Aufgaben-Tool, das direkt in den Flow schaltet.</h1>
+          <p class="hero-text" data-i18n="heroText">
+            Tododolix ist für schnelles Planen, Priorisieren und Erledigen gemacht.
+            Auf Desktop mit Fokus-Workspace, auf Mobile mit kompakter Tagesansicht.
+          </p>
+
+          <div class="hero-actions">
+            <a id="open-tool-hero" class="button button-primary" href="./app/" data-i18n="openTool">Zum Tool</a>
+            <a class="button button-secondary" href="#features" data-i18n="navFeatures">Features</a>
+          </div>
+
+          <div class="hero-note glass">
+            <p data-i18n="heroNote">Beim Öffnen wird automatisch die passende Version für dein Gerät geladen.</p>
+          </div>
+        </div>
+
+        <div class="hero-visual">
+          <article class="showcase-card showcase-primary glass">
+            <div class="showcase-header">
+              <span class="badge badge-live" data-i18n="liveProduct">Live Product</span>
+              <span class="status-dot"></span>
+            </div>
+            <h2 data-i18n="showcaseTitle">Fokus statt Feature-Lärm</h2>
+            <p data-i18n="showcaseText">Klare Aufgaben, schnelle Erfassung, visuelle Priorisierung und direkte Bearbeitung.</p>
+
+            <div class="mini-grid">
+              <div class="mini-panel">
+                <strong data-i18n="desktopLabel">Desktop</strong>
+                <span data-i18n="desktopText">Breite Planungsansicht mit Workspace-Charakter</span>
+              </div>
+              <div class="mini-panel">
+                <strong data-i18n="mobileLabel">Mobile</strong>
+                <span data-i18n="mobileText">Schnelles Erfassen, Filtern und Durcharbeiten unterwegs</span>
+              </div>
+            </div>
+          </article>
+
+          <article class="showcase-card showcase-secondary">
+            <div class="metric">
+              <span data-i18n="coreModel">Core Model</span>
+              <strong data-i18n="coreModelTitle">Ein Produktkern, zwei Interfaces</strong>
+            </div>
+            <div class="timeline">
+              <span data-i18n="timelineCapture">Capture</span>
+              <span data-i18n="timelinePrioritize">Priorisieren</span>
+              <span data-i18n="timelineExecute">Execute</span>
+              <span data-i18n="timelineArchive">Archive</span>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section id="produkt" class="section split-section">
+        <div>
+          <p class="section-label" data-i18n="productLabel">About The Product</p>
+          <h2 data-i18n="productTitle">Gebaut für Menschen, die Aufgaben wirklich bewegen wollen.</h2>
+        </div>
+        <div class="section-copy">
+          <p data-i18n="productText">
+            Tododolix kombiniert eine aufgeräumte Aufgabenlogik mit zwei gezielt verschiedenen Oberflächen.
+            Desktop ist für Planung, Priorisierung und Fokus-Sessions gemacht. Mobile ist für schnelle Eingaben
+            und den Tagesblick unterwegs optimiert.
+          </p>
+        </div>
+      </section>
+
+      <section id="features" class="section">
+        <div class="section-head">
+          <div>
+            <p class="section-label" data-i18n="featuresLabel">Features</p>
+            <h2 data-i18n="featuresTitle">Konkrete Funktionen statt großer Worte.</h2>
+          </div>
+          <a id="open-tool-features" class="button button-secondary" href="./app/" data-i18n="openTool">Zum Tool</a>
+        </div>
+
+        <div class="feature-grid">
+          <article class="feature-card glass">
+            <h3 data-i18n="featureFastTitle">Schnelle Erfassung</h3>
+            <p data-i18n="featureFastText">Erstelle Aufgaben in Sekunden inklusive Datum, Uhrzeit und Dauer.</p>
+          </article>
+          <article class="feature-card glass">
+            <h3 data-i18n="featurePriorityTitle">Klare Prioritäten</h3>
+            <p data-i18n="featurePriorityText">Arbeite mit Low, Medium und High sowie farbigen Karten für sofortiges Scannen.</p>
+          </article>
+          <article class="feature-card glass">
+            <h3 data-i18n="featureFlowTitle">Status-Flow</h3>
+            <p data-i18n="featureFlowText">Von offen zu in Arbeit bis erledigt oder archiviert, ohne Umwege.</p>
+          </article>
+          <article class="feature-card glass">
+            <h3 data-i18n="featureFilterTitle">Filter und Fokus</h3>
+            <p data-i18n="featureFilterText">Filtere nach Zeitraum und Priorität, um genau das zu sehen, was jetzt zählt.</p>
+          </article>
+          <article class="feature-card glass">
+            <h3 data-i18n="featureReminderTitle">Lokale Erinnerungen</h3>
+            <p data-i18n="featureReminderText">Nutze browserbasierte Erinnerungen für Start- und Endzeitpunkte ohne Cloud-Zwang.</p>
+          </article>
+          <article class="feature-card glass">
+            <h3 data-i18n="featurePlatformsTitle">Desktop und Mobile</h3>
+            <p data-i18n="featurePlatformsText">Öffne direkt die passende Version für dein Gerät.</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="about" class="section about-grid">
+        <article class="about-card glass">
+          <p class="section-label" data-i18n="aboutUsLabel">About Us</p>
+          <h2 data-i18n="aboutUsTitle">Ein kleines Produkt mit klarer Haltung.</h2>
+          <p data-i18n="aboutUsText">
+            Tododolix verfolgt einen bewusst schlanken Ansatz: produktivitätsnah, lokal-first und ohne überfrachtete
+            Oberflächen. Gute Aufgaben-Tools sollen Entscheidungen erleichtern und nicht selbst zum Projekt werden.
+          </p>
+        </article>
+
+        <article class="about-card glass">
+          <p class="section-label" data-i18n="whyExistsLabel">Why It Exists</p>
+          <h2 data-i18n="whyExistsTitle">Weniger Reibung zwischen Plan und Erledigung.</h2>
+          <p data-i18n="whyExistsText">
+            Das Produkt ist für Nutzer gedacht, die einen schnellen Tagesfluss wollen:
+            erfassen, priorisieren, loslegen, abschließen.
+          </p>
+        </article>
+      </section>
+    </main>
+  </div>
+
+  <script src="./main.js"></script>
+</body>
+</html>

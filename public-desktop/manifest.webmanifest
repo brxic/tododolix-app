@@ -1,0 +1,16 @@
+{
+  "name": "Tododolix Desktop",
+  "short_name": "Tododolix",
+  "start_url": "/app/desktop/",
+  "scope": "/app/desktop/",
+  "display": "standalone",
+  "background_color": "#f3f1ed",
+  "theme_color": "#c84a4a",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "48x48",
+      "type": "image/x-icon"
+    }
+  ]
+}

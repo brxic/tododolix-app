@@ -34,9 +34,7 @@
               "src-desktop/styles.css"
             ],
             "scripts": [],
-            "outputMode": "static",
-            "serviceWorker": true,
-            "ngswConfigPath": "ngsw-config.desktop.json"
+            "outputMode": "static"
           },
           "configurations": {
             "production": {
@@ -133,9 +131,7 @@
               "src-mobile/styles.css"
             ],
             "scripts": [],
-            "outputMode": "static",
-            "serviceWorker": true,
-            "ngswConfigPath": "ngsw-config.mobile.json"
+            "outputMode": "static"
           },
           "configurations": {
             "production": {

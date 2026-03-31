@@ -1,0 +1,16 @@
+{
+  "name": "Tododolix Mobile",
+  "short_name": "Tododolix",
+  "start_url": "/app/mobile/",
+  "scope": "/app/mobile/",
+  "display": "standalone",
+  "background_color": "#f3f1ed",
+  "theme_color": "#c84a4a",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "48x48",
+      "type": "image/x-icon"
+    }
+  ]
+}
